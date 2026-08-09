@@ -1,0 +1,10 @@
+track: 05_titans
+model: titans_compact
+task: long_context_recall
+seed: 1729
+batch_size: 128
+epochs: 100
+learning_rate: 0.001
+parameter_budget: null
+compute_budget: null
+notes: "Scaffold configuration; tune only after the baseline is established."

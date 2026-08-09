@@ -1,0 +1,10 @@
+track: 10_flow_matching
+model: flow_matching
+task: two_moons_generation
+seed: 1729
+batch_size: 256
+epochs: 200
+learning_rate: 0.001
+parameter_budget: null
+compute_budget: null
+notes: "Scaffold configuration; tune only after the baseline is established."

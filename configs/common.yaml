@@ -1,0 +1,9 @@
+seed: 1729
+device: auto
+dtype: float32
+output_dir: artifacts
+num_workers: 0
+repetitions: 5
+log_every_steps: 50
+save_predictions: true
+save_checkpoints: false

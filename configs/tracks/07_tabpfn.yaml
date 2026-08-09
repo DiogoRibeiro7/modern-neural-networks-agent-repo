@@ -1,0 +1,10 @@
+track: 07_tabpfn
+model: pfn_toy
+task: tabular_classification
+seed: 1729
+batch_size: 64
+epochs: 50
+learning_rate: 0.001
+parameter_budget: null
+compute_budget: null
+notes: "Scaffold configuration; tune only after the baseline is established."

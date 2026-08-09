@@ -1,0 +1,22 @@
+{
+  "title": "Modern Neural Networks Lab",
+  "version": "0.1.0",
+  "description": "Research-grade implementations and comparisons of modern neural-network architectures.",
+  "creators": [
+    {
+      "name": "Ribeiro, Diogo",
+      "orcid": "0009-0001-2022-7072",
+      "affiliation": "ESMAD - School of Media Arts and Design, Polytechnic of Porto"
+    }
+  ],
+  "upload_type": "software",
+  "access_right": "open",
+  "language": "eng",
+  "keywords": [
+    "neural networks",
+    "machine learning",
+    "deep learning",
+    "research software",
+    "reproducibility"
+  ]
+}

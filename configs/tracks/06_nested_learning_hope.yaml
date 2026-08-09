@@ -1,0 +1,10 @@
+track: 06_nested_learning_hope
+model: hope_prototype
+task: continual_sequence
+seed: 1729
+batch_size: 128
+epochs: 100
+learning_rate: 0.001
+parameter_budget: null
+compute_budget: null
+notes: "Scaffold configuration; tune only after the baseline is established."

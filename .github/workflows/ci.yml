@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Poetry
+        run: pip install poetry
+
+      - name: Install dependencies
+        run: poetry install --no-interaction
+
+      - name: Validate scaffold
+        run: poetry run python scripts/validate_scaffold.py
+
+      - name: Ruff
+        run: |
+          poetry run ruff check .
+          poetry run ruff format --check .
+
+      - name: mypy
+        run: poetry run mypy src
+
+      - name: pytest
+        run: poetry run pytest

@@ -1,0 +1,10 @@
+track: 01_kan
+model: kan
+task: function_approximation
+seed: 1729
+batch_size: 256
+epochs: 200
+learning_rate: 0.001
+parameter_budget: null
+compute_budget: null
+notes: "Scaffold configuration; tune only after the baseline is established."

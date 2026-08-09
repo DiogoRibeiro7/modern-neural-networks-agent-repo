@@ -1,0 +1,53 @@
+[tool.poetry]
+name = "modern-neural-networks-lab"
+version = "0.1.0"
+description = "Research-grade implementations and comparisons of modern neural-network architectures."
+authors = ["Research repository contributors"]
+readme = "README.md"
+packages = [{ include = "modern_nn_lab", from = "src" }]
+
+[tool.poetry.dependencies]
+python = ">=3.11,<3.14"
+torch = ">=2.3"
+numpy = ">=1.26"
+pandas = ">=2.2"
+scikit-learn = ">=1.5"
+scipy = ">=1.13"
+matplotlib = ">=3.9"
+pydantic = ">=2.7"
+pyyaml = ">=6.0"
+typer = ">=0.12"
+rich = ">=13.7"
+
+[tool.poetry.group.dev.dependencies]
+pytest = ">=8.2"
+pytest-cov = ">=5.0"
+hypothesis = ">=6.100"
+ruff = ">=0.5"
+mypy = ">=1.10"
+pre-commit = ">=3.7"
+
+[tool.poetry.scripts]
+modern-nn = "modern_nn_lab.cli:app"
+
+[build-system]
+requires = ["poetry-core>=1.9.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers --strict-config"
+pythonpath = ["src"]
