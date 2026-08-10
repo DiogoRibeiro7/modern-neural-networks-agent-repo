@@ -1,10 +1,42 @@
 track: 02_xlstm
 model: xlstm
-task: sequence_copy
+task: sequence_diagnostics
+claim_level: educational implementation
+
+# Optimization. Identical for the xLSTM, its ablation, and every baseline.
 seed: 1729
-batch_size: 128
-epochs: 100
-learning_rate: 0.001
-parameter_budget: null
+seeds: [0, 1, 2, 3, 4]
+scaling_seeds: [0, 1, 2]
+batch_size: 64
+epochs: 50
+optimizer: adam
+cosine_schedule: true
+learning_rate_grid: [0.001, 0.003]   # searched per architecture on validation
+
+# Architecture.
+d_model: 32
+n_blocks: 1
+heads: 2
+input_gate: exponential      # "sigmoid" is the ablation
+forget_gate: sigmoid
+
+# Diagnostics.
+n_sequences: 500
+copy_payload_len: 4
+copy_delay: 8
+recall_pairs: 4
+recall_keys: 8
+recall_values: 8
+state_tracking_seq_len: 16
+context_lengths: [8, 16]
+
+# Baselines, each width-matched to the xLSTM parameter count.
+baselines: [lstm, gru, transformer]
+
+parameter_budget: matched-to-xlstm
 compute_budget: null
-notes: "Scaffold configuration; tune only after the baseline is established."
+notes: >-
+  Throughput figures come from a stepwise Python recurrence, not a fused kernel, and say
+  nothing about the architecture's achievable speed. Sequence lengths here are 16-64, far
+  below the regime where attention's quadratic cost matters, so the Transformer baseline
+  is not disadvantaged by context length.
