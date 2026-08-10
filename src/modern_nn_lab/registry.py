@@ -94,6 +94,7 @@ TRACKS: tuple[TrackSpec, ...] = (
         "relational",
         "Can connected tables be modeled natively?",
         "research prototype",
+        "complete",
     ),
     TrackSpec(
         "moe",

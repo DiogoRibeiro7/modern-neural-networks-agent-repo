@@ -189,6 +189,30 @@ predictions are invariant to context order, and that prediction moves no paramet
 three properties that make in-context prediction well posed, each asserted in
 `tests/test_pfn.py`.
 
+### Track 08 — Relational Foundation Models
+
+| Field | Value |
+|---|---|
+| Primary source | **Not retrieved.** No paper was fetched or read in this environment for this track |
+| Formulation used | The prototype specification in the track prompt: represent entities, rows, columns, foreign keys, timestamps and task context without flattening the tables into one feature matrix |
+| Official model | KumoRFM-2 or any other relational foundation model: **not accessed, not adapted, not invoked.** The prompt makes the reference track conditional on accessibility, and no such model was available here |
+| Reference comparison | **None run.** Nothing in this track bears on how a real relational foundation model behaves |
+| Datasets | Four synthetic tables generated in-repo across five diagnostic regimes. No external data |
+| Claim level | `research prototype` |
+
+**What the acceptance criteria are met by.** Both are structural rather than asserted in
+prose. Temporal gating happens in exactly one module, which every model and every baseline
+reads its inputs from; each generated database plants post-timestamp rows that encode the
+label exactly, so a leaking pipeline scores 1.00 and the tests are positive controls rather
+than assertions. The reachable-path trace enumerates the relational paths exactly — the row
+set is finite and its foreign-key pointers explicit — and reports gradient attribution
+separately, because reachability and use are different questions.
+
+**What is deliberately absent.** No pre-trained relational checkpoint, no text columns, no
+self-referential or many-to-many links, and no hop depth beyond two. The deepest claim
+tested is that two message-passing rounds are needed to reach a two-hop attribute and one is
+not, which is asserted directly against the model rather than inferred from accuracy.
+
 ## Source verification checklist
 
 For every track, record:
