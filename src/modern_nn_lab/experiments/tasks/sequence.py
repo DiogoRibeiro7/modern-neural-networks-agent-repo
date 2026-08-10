@@ -420,6 +420,113 @@ def make_rebinding_task(
     )
 
 
+def make_needle_task(
+    *,
+    n_sequences: int = 500,
+    n_pairs: int = 8,
+    needle_index: int = 0,
+    n_keys: int = 12,
+    n_values: int = 8,
+    repeats: int = 1,
+    seed: int = 1729,
+    name: str | None = None,
+) -> SequenceSplit:
+    """Retrieve one fact planted at a controlled distance from the query.
+
+    Layout::
+
+        [ k1 v1  k2 v2  ...  kP vP ][ q  ans ]
+                 ^ the queried pair sits at `needle_index`      ^ scored
+
+    Unlike :func:`make_selective_recall_task`, which queries a *random* pair, this task
+    fixes *which* pair is asked for. Sweeping ``needle_index`` therefore sweeps the
+    distance between writing a fact and being asked for it, which is what turns a single
+    accuracy number into a **forgetting curve**.
+
+    ``needle_index = 0`` puts the fact furthest from the query; the final index puts it
+    adjacent. A model whose only memory is a sliding window of size ``W`` can answer only
+    when the distance is below ``W``, so the curve's shape distinguishes "has long-term
+    memory" from "has a long enough short-term window".
+
+    Args:
+        n_sequences: Total sequences before splitting.
+        n_pairs: Key-value pairs stored per sequence.
+        needle_index: Which pair is queried, counting from the start.
+        n_keys: Key alphabet size; at least ``n_pairs`` so keys stay unique.
+        n_values: Value alphabet size.
+        repeats: How many times the queried pair is written. ``1`` is a one-off fact;
+            higher values make it a repeated fact, which tests whether repetition
+            strengthens a memory the way the source's surprise metric implies it should.
+        seed: Generator seed.
+        name: Dataset label. Defaults to ``needle-d{distance}``.
+
+    Returns:
+        A :class:`SequenceSplit` whose metadata carries ``distance``, the number of tokens
+        between the needle's value and the query.
+
+    Raises:
+        ValueError: If a dimension is invalid, ``needle_index`` is out of range, or
+            ``repeats`` exceeds the available slots.
+    """
+
+    if min(n_sequences, n_pairs, n_keys, n_values, repeats) <= 0:
+        raise ValueError("all task dimensions must be positive")
+    if n_keys < n_pairs:
+        raise ValueError("n_keys must be at least n_pairs so that keys stay unique")
+    if not 0 <= needle_index < n_pairs:
+        raise ValueError(f"needle_index must lie in [0, {n_pairs}), got {needle_index}")
+    if repeats > n_pairs - needle_index:
+        raise ValueError("repeats exceeds the slots available after needle_index")
+
+    vocab_size = n_keys + n_values
+    seq_len = 2 * n_pairs + 2
+
+    generator = torch.Generator().manual_seed(seed)
+    keys = torch.stack(
+        [torch.randperm(n_keys, generator=generator)[:n_pairs] for _ in range(n_sequences)]
+    )
+    values = torch.randint(0, n_values, (n_sequences, n_pairs), generator=generator) + n_keys
+
+    # A repeated fact reuses the same key and value in the following slots.
+    for offset in range(1, repeats):
+        keys[:, needle_index + offset] = keys[:, needle_index]
+        values[:, needle_index + offset] = values[:, needle_index]
+
+    inputs = torch.zeros((n_sequences, seq_len), dtype=torch.long)
+    inputs[:, 0 : 2 * n_pairs : 2] = keys
+    inputs[:, 1 : 2 * n_pairs : 2] = values
+
+    queried_key = keys[:, needle_index]
+    inputs[:, 2 * n_pairs] = queried_key
+    inputs[:, 2 * n_pairs + 1] = queried_key
+
+    targets = torch.full((n_sequences, seq_len), IGNORE_INDEX, dtype=torch.long)
+    targets[:, 2 * n_pairs + 1] = values[:, needle_index]
+
+    # Tokens between the needle's value and the answer slot.
+    distance = seq_len - 1 - (2 * needle_index + 1)
+
+    return _assemble(
+        name or f"needle-d{distance}",
+        inputs,
+        targets,
+        vocab_size=vocab_size,
+        strategy=f"iid sequences, 70/15/15 split, seq_len={seq_len}",
+        metadata={
+            "task": "needle",
+            "n_pairs": n_pairs,
+            "needle_index": needle_index,
+            "distance": distance,
+            "repeats": repeats,
+            "n_keys": n_keys,
+            "n_values": n_values,
+            "seq_len": seq_len,
+            "answer_index": 2 * n_pairs + 1,
+            "chance_accuracy": 1.0 / n_values,
+        },
+    )
+
+
 def masked_cross_entropy(logits: Tensor, targets: Tensor) -> Tensor:
     """Cross-entropy over scored positions only.
 

@@ -37,6 +37,12 @@ experimental results, as defined in [`docs/claim_policy.md`](docs/claim_policy.m
   forward pass; the required frozen-learner ablation; a batch-gradient-descent ablation the
   source proves is linear attention; a new rebinding task that overwrites a binding
   mid-sequence; 21 invariant tests; 79 committed records; `reports/ttt.md`.
+- **Track 05 — Titans** (claim level: `educational implementation`): neural long-term
+  memory with surprise, momentum, and adaptive forgetting, wired as Memory-as-Gate with
+  sliding-window attention; short-term-only, frozen-memory, no-momentum, and slow-update
+  ablations; a needle task with controlled write-to-query distance; a memory-diagnostics
+  artefact carrying per-token write/read traces and a forgetting curve; 28 invariant tests;
+  60 committed records; `reports/titans.md`.
 - Record filenames now include the dataset fingerprint, and the result validator fails when
   one aggregation group mixes datasets — a label collision had silently overwritten records.
 - `modern_nn_lab.models.sequence`: shared token-sequence scaffolding and baselines,

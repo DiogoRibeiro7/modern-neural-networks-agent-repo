@@ -50,6 +50,11 @@ def get_track_suite(key: str) -> RunTrack:
 
         return ttt.run
 
+    if key == "titans":
+        from modern_nn_lab.experiments.tracks import titans
+
+        return titans.run
+
     raise KeyError(f"track {key!r} has no runnable experiment suite yet")
 
 

@@ -21,7 +21,7 @@ repository's claim boundaries.
 | xLSTM | 100% | 100% | 100% | 100% | 100% | complete |
 | Mamba-3 | 100% | 100% | 100% | 100% | 100% | complete |
 | TTT | 100% | 100% | 100% | 100% | 100% | complete |
-| Titans | 0% | 0% | 0% | 0% | 0% | queued |
+| Titans | 100% | 100% | 100% | 100% | 100% | complete |
 | Nested Learning / Hope | 0% | 0% | 0% | 0% | 0% | queued |
 | PFN / TabPFN | 0% | 0% | 0% | 0% | 0% | queued |
 | Relational FM | 0% | 0% | 0% | 0% | 0% | queued |
@@ -30,15 +30,15 @@ repository's claim boundaries.
 | JEPA | 0% | 0% | 0% | 0% | 0% | queued |
 
 Milestone **M0 (repository contracts)** is complete. Tracks 01 (KAN), 02 (xLSTM),
-03 (Mamba-3), and 04 (TTT) are complete end to end and establish the conventions every later track
+03 (Mamba-3), 04 (TTT), and 05 (Titans) are complete end to end and establish the conventions every later track
 follows. Tracks 02 and 03 share task generation, so their records are directly comparable.
 
 ## Next atomic milestone
 
-Track 05 (Titans-style neural long-term memory): choose one of the source's three
-architecture variants deliberately and document why, implement the surprise/update signal
-as the source defines it, and produce explicit memory-write/read diagnostics rather than
-task accuracy alone.
+Track 06 (Nested Learning / Hope). Begin with the formalization audit the prompt requires:
+derive the nested optimization levels, write the update equations, and state which
+variables change at which timescale, **before** writing any code. Treat it as a research
+prototype and label speculative interpretation as such.
 
 ## Last verification
 
@@ -103,6 +103,22 @@ task accuracy alone.
   0.371 to 0.221 and puts selective recall exactly at chance, because the layer becomes a
   position-independent function of each token.
 
+**Track 05 — Titans** (claim level: `educational implementation`)
+
+- Primary source retrieved and read in-environment; equations 8, 11-15, 19 and 26-31 are
+  transcribed. Implements **Memory as a Gate**, with the choice among the source's three
+  variants argued explicitly in the track README.
+- Added `tracks/titans/` (`memory`, `model`, `config`, `README`), a needle task with
+  controlled write-to-query distance, the experiment suite, and the report generator.
+- 28 invariant tests, checking each term of the update rule in isolation: associative
+  loss, first write, momentum accumulation, the reduction to equation 8 without momentum,
+  the forgetting gate at `alpha = 1`, purely additive writes without forgetting, and
+  200-step stability.
+- 60 records plus a memory-diagnostics artefact under `results/titans/`.
+- **The acceptance criterion is met by artefact, not by prose**: per-token surprise, write
+  magnitude and gate traces, plus a forgetting curve whose crossover sits at the
+  short-term window size.
+
 ### Corrected defects worth carrying forward
 
 The first version of the KAN suite trained every model at one shared learning rate. The
@@ -126,6 +142,13 @@ task — leaving groups that were incomplete *and* mixed two datasets. Filenames
 the dataset fingerprint, and `scripts/validate_results.py` fails when one aggregation group
 contains more than one fingerprint. Details in `reports/ttt.md`, section 8.
 
+**An update rule can be correct on paper and divergent in practice.** The Titans memory
+update, implemented exactly as written, reaches 4.9e37 by token 4 and `NaN` by token 5,
+because the source specifies a learnable `theta_t` with no numeric range. Bounding it,
+normalizing keys, and averaging the loss over features fixes it. Any later track that
+implements an online update rule should measure state magnitude over a long sequence
+*before* trusting it. Details in `reports/titans.md`, section 8.
+
 ### Unresolved
 
 - `Tensor.backward` is unannotated in the Torch distribution, so one narrowly scoped
@@ -133,8 +156,14 @@ contains more than one fingerprint. Details in `reports/ttt.md`, section 8.
   justification.
 - Adaptive grid updates are implemented and tested but excluded from the reported KAN
   training loop; they are listed as deviation 4 and as a next experiment.
-- Seven architecture tracks remain queued (Titans, Nested Learning/Hope, PFN/TabPFN,
-  Relational FM, Sparse MoE, Flow Matching, JEPA) plus the final integration prompt.
+- Six architecture tracks remain queued (Nested Learning/Hope, PFN/TabPFN, Relational FM,
+  Sparse MoE, Flow Matching, JEPA) plus the final integration prompt.
+- Titans implements MAG only. The source's recommended variant, Memory as Context, is not
+  implemented, so no result here bears on it.
+- Titans' surprise signal does **not** discriminate repeated from one-off facts in these
+  measurements, so the observed benefit is attributable to having a persistent associative
+  store rather than to surprise-driven selection. Distinguishing the two needs a task where
+  most tokens are worth ignoring.
 - TTT runs pure online gradient descent (`b = 1`). The source reports mini-batch TTT with
   `b = 16` as its single largest quality gain, so this track's numbers are knowingly below
   the paper's configuration and its online-vs-batch comparison is not a test of the

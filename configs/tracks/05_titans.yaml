@@ -1,10 +1,44 @@
 track: 05_titans
-model: titans_compact
-task: long_context_recall
+model: titans_mag
+task: needle_retrieval
+claim_level: educational implementation
+variant: memory-as-gate   # MAC and MAL are not implemented; see the track README
+
 seed: 1729
-batch_size: 128
-epochs: 100
-learning_rate: 0.001
-parameter_budget: null
+seeds: [0, 1, 2, 3, 4]
+batch_size: 64
+epochs: 40
+optimizer: adam
+cosine_schedule: true
+learning_rate_grid: [0.001, 0.003]
+
+# Architecture.
+d_model: 32
+n_heads: 2
+window: 6                 # short-term memory span; needles are placed beyond it
+d_memory: null            # defaults to d_model // 2
+memory_depth: 2           # the source argues >= 2 beats a matrix-valued memory
+persistent_tokens: 2      # source eq. 19
+
+# Stability deviations, forced by measurement (see the track README).
+learning_rate_base: 0.1   # bounds theta_t; unbounded diverges within four tokens
+normalize_keys: true
+feature_averaged_loss: true
+
+# Diagnostics: distance between writing a fact and being asked for it.
+n_sequences: 500
+needle_pairs: 5
+needle_indices: [0, 4]    # distance 10 (outside window) and 2 (inside window)
+diagnostic_sequences: 64
+
+baselines: [lstm, transformer]
+ablations: [short-term-only, frozen-memory, no-momentum, slow-updates]
+
+parameter_budget: matched-to-titans
 compute_budget: null
-notes: "Scaffold configuration; tune only after the baseline is established."
+notes: >-
+  The experiment is an interaction, not a single accuracy: a sliding window of size W
+  should suffice when the fact lies within W and fail beyond it, and the neural memory
+  should close that gap. The acceptance criterion is explicit memory-write/read
+  diagnostics, which are serialized to results/titans/artefacts/memory_diagnostics.json
+  rather than summarized only as task accuracy.

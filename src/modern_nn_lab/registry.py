@@ -69,7 +69,8 @@ TRACKS: tuple[TrackSpec, ...] = (
         "Titans-style Neural Memory",
         "memory",
         "Can explicit neural memory learn online?",
-        "compact reproduction",
+        "educational implementation",
+        "complete",
     ),
     TrackSpec(
         "hope",
