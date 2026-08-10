@@ -10,6 +10,11 @@ repository now carries an MIT license, contribution guide, code of conduct, secu
 citation metadata, issue/pull-request templates, Dependabot, CodeQL analysis, and a split CI
 pipeline with a Python 3.11-3.13 test matrix. No architecture track status changed.
 
+The Zenodo metadata was enriched for software archiving: it now includes publication date,
+rights-holder metadata, a Zenodo license identifier, repository and documentation related
+identifiers, completed-track source references, broader keywords, and a note preserving the
+repository's claim boundaries.
+
 | Track | Specification | Core implementation | Tests | Benchmarks | Report | Status |
 |---|---:|---:|---:|---:|---:|---|
 | KAN | 100% | 100% | 100% | 100% | 100% | complete |
@@ -126,3 +131,16 @@ track that stabilizes a recurrence must carry the same kind of test. Details in
 Torch metadata. The quality gate is therefore executed with the interpreter's installed
 toolchain (`python -m ruff`, `python -m mypy`, `python -m pytest`), which runs the identical
 commands CI runs through Poetry.
+
+### Last metadata-only verification
+
+- Read Zenodo's current GitHub `.zenodo.json` guidance and deposition metadata field
+  documentation.
+- Queried Zenodo's license vocabulary endpoint and confirmed the MIT license identifier is
+  `mit`.
+- Ran `python -m json.tool .zenodo.json`.
+- Attempted validation against Zenodo's legacy deposition JSON schema. That schema rejects
+  `version` and `language`, even though Zenodo's current GitHub `.zenodo.json` guidance
+  includes both fields; the file keeps those software-specific metadata fields.
+- Full source quality gate not rerun because only repository archive metadata and status
+  documentation changed.
