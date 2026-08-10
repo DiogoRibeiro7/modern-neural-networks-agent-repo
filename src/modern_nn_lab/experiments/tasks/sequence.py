@@ -322,6 +322,104 @@ def make_state_tracking_task(
     )
 
 
+def make_rebinding_task(
+    *,
+    n_sequences: int = 500,
+    n_pairs: int = 3,
+    n_keys: int = 6,
+    n_values: int = 6,
+    seed: int = 1729,
+    name: str = "rebinding",
+) -> SequenceSplit:
+    """Associative recall where the key-value mapping is *overwritten* mid-sequence.
+
+    Layout, with ``P`` pairs::
+
+        [ k1 a1 ... kP aP ][ q  ans_a ][ k1 b1 ... kP bP ][ q  ans_b ]
+                             ^ scored                       ^ scored
+
+    The same keys appear twice with different values. The first query is ordinary
+    associative recall; the second requires *unlearning* the earlier binding within the
+    same sequence, using evidence that arrived after the first answer.
+
+    This is the diagnostic for adaptation to an abrupt distribution change inside a
+    sequence. A model whose state can only accumulate will answer the second query with
+    the first value; a model that can revise its state will not. Scoring the two answers
+    separately is what makes the distinction visible, so the second answer's accuracy is
+    reported as a secondary metric by the track suite.
+
+    Args:
+        n_sequences: Total sequences before splitting.
+        n_pairs: Key-value pairs, bound twice.
+        n_keys: Key alphabet size; at least ``n_pairs`` so keys stay unique.
+        n_values: Value alphabet size.
+        seed: Generator seed.
+        name: Dataset label. Give scaled variants distinct names so they are legible in
+            reports; record filenames additionally carry a content fingerprint.
+
+    Returns:
+        A :class:`SequenceSplit`. Keys occupy ``[0, n_keys)`` and values
+        ``[n_keys, n_keys + n_values)``.
+
+    Raises:
+        ValueError: If a dimension is not positive or ``n_keys < n_pairs``.
+    """
+
+    if min(n_sequences, n_pairs, n_keys, n_values) <= 0:
+        raise ValueError("all task dimensions must be positive")
+    if n_keys < n_pairs:
+        raise ValueError("n_keys must be at least n_pairs so that keys stay unique")
+
+    vocab_size = n_keys + n_values
+    block = 2 * n_pairs
+    seq_len = 2 * block + 4
+
+    generator = torch.Generator().manual_seed(seed)
+    keys = torch.stack(
+        [torch.randperm(n_keys, generator=generator)[:n_pairs] for _ in range(n_sequences)]
+    )
+    first_values = torch.randint(0, n_values, (n_sequences, n_pairs), generator=generator) + n_keys
+    second_values = torch.randint(0, n_values, (n_sequences, n_pairs), generator=generator) + n_keys
+    query_index = torch.randint(0, n_pairs, (n_sequences,), generator=generator)
+
+    inputs = torch.zeros((n_sequences, seq_len), dtype=torch.long)
+    inputs[:, 0:block:2] = keys
+    inputs[:, 1:block:2] = first_values
+
+    rows = torch.arange(n_sequences)
+    queried_key = keys[rows, query_index]
+    inputs[:, block] = queried_key
+    inputs[:, block + 1] = queried_key
+
+    rebind = block + 2
+    inputs[:, rebind : rebind + block : 2] = keys
+    inputs[:, rebind + 1 : rebind + block : 2] = second_values
+    inputs[:, rebind + block] = queried_key
+    inputs[:, rebind + block + 1] = queried_key
+
+    targets = torch.full((n_sequences, seq_len), IGNORE_INDEX, dtype=torch.long)
+    targets[:, block + 1] = first_values[rows, query_index]
+    targets[:, rebind + block + 1] = second_values[rows, query_index]
+
+    return _assemble(
+        name,
+        inputs,
+        targets,
+        vocab_size=vocab_size,
+        strategy=f"iid sequences, 70/15/15 split, seq_len={seq_len}",
+        metadata={
+            "task": "rebinding",
+            "n_pairs": n_pairs,
+            "n_keys": n_keys,
+            "n_values": n_values,
+            "seq_len": seq_len,
+            "first_answer_index": block + 1,
+            "second_answer_index": rebind + block + 1,
+            "chance_accuracy": 1.0 / n_values,
+        },
+    )
+
+
 def masked_cross_entropy(logits: Tensor, targets: Tensor) -> Tensor:
     """Cross-entropy over scored positions only.
 

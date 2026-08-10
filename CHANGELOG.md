@@ -32,6 +32,13 @@ experimental results, as defined in [`docs/claim_policy.md`](docs/claim_policy.m
   state update, each removable by a flag that recovers the prior method exactly; LSTM, GRU,
   and Transformer baselines matched by width; 22 invariant tests including four equality
   assertions against the source's own equations; 105 committed records; `reports/mamba3.md`.
+- **Track 04 — Test-Time Training** (claim level: `educational implementation`): TTT-Linear
+  and TTT-MLP whose hidden state is an inner model trained by gradient descent during the
+  forward pass; the required frozen-learner ablation; a batch-gradient-descent ablation the
+  source proves is linear attention; a new rebinding task that overwrites a binding
+  mid-sequence; 21 invariant tests; 79 committed records; `reports/ttt.md`.
+- Record filenames now include the dataset fingerprint, and the result validator fails when
+  one aggregation group mixes datasets — a label collision had silently overwritten records.
 - `modern_nn_lab.models.sequence`: shared token-sequence scaffolding and baselines,
   promoted out of the xLSTM track once a second track needed them.
 - A `Split` protocol so one experiment runner serves tabular and sequence splits alike.

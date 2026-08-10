@@ -71,6 +71,24 @@ def test_filename_separates_variants_and_seeds() -> None:
     assert len({first, second, third}) == 3
 
 
+def test_filename_separates_splits_that_share_a_dataset_label(tmp_path) -> None:
+    """Regression: a scaled task variant must not overwrite the original's records.
+
+    The TTT track ran the same task at two sizes under one dataset label. Because the
+    filename keyed only on (architecture, variant, dataset, seed), the second run
+    silently replaced three seeds of the first, leaving groups with missing seeds and
+    two different datasets merged under one name.
+    """
+
+    small = make_record(dataset="rebinding", dataset_fingerprint="aaaaaaaaaaaaaaaa")
+    large = make_record(dataset="rebinding", dataset_fingerprint="bbbbbbbbbbbbbbbb")
+    assert small.filename() != large.filename()
+
+    save_record(small, tmp_path)
+    save_record(large, tmp_path)
+    assert len(list(tmp_path.glob("*.json"))) == 2
+
+
 def test_iter_records_reads_every_file(tmp_path) -> None:
     for seed in range(3):
         save_record(make_record(seed=seed), tmp_path)

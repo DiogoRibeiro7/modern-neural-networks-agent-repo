@@ -10,12 +10,17 @@ repository now carries an MIT license, contribution guide, code of conduct, secu
 citation metadata, issue/pull-request templates, Dependabot, CodeQL analysis, and a split CI
 pipeline with a Python 3.11-3.13 test matrix. No architecture track status changed.
 
+The Zenodo metadata was enriched for software archiving: it now includes publication date,
+rights-holder metadata, a Zenodo license identifier, repository and documentation related
+identifiers, completed-track source references, broader keywords, and a note preserving the
+repository's claim boundaries.
+
 | Track | Specification | Core implementation | Tests | Benchmarks | Report | Status |
 |---|---:|---:|---:|---:|---:|---|
 | KAN | 100% | 100% | 100% | 100% | 100% | complete |
 | xLSTM | 100% | 100% | 100% | 100% | 100% | complete |
 | Mamba-3 | 100% | 100% | 100% | 100% | 100% | complete |
-| TTT | 0% | 0% | 0% | 0% | 0% | queued |
+| TTT | 100% | 100% | 100% | 100% | 100% | complete |
 | Titans | 0% | 0% | 0% | 0% | 0% | queued |
 | Nested Learning / Hope | 0% | 0% | 0% | 0% | 0% | queued |
 | PFN / TabPFN | 0% | 0% | 0% | 0% | 0% | queued |
@@ -24,16 +29,16 @@ pipeline with a Python 3.11-3.13 test matrix. No architecture track status chang
 | Flow Matching | 0% | 0% | 0% | 0% | 0% | queued |
 | JEPA | 0% | 0% | 0% | 0% | 0% | queued |
 
-Milestone **M0 (repository contracts)** is complete. Tracks 01 (KAN), 02 (xLSTM), and
-03 (Mamba-3) are complete end to end and establish the conventions every later track
+Milestone **M0 (repository contracts)** is complete. Tracks 01 (KAN), 02 (xLSTM),
+03 (Mamba-3), and 04 (TTT) are complete end to end and establish the conventions every later track
 follows. Tracks 02 and 03 share task generation, so their records are directly comparable.
 
 ## Next atomic milestone
 
-Track 04 (Test-Time Training): implement TTT-Linear, whose hidden state is itself a
-learner updated by a self-supervised objective during the forward pass. Reuse the shared
-sequence tasks so the results join the Track 02 and 03 comparison, and make the required
-ablation — the identical architecture with the inner update frozen — the primary result.
+Track 05 (Titans-style neural long-term memory): choose one of the source's three
+architecture variants deliberately and document why, implement the surprise/update signal
+as the source defines it, and produce explicit memory-write/read diagnostics rather than
+task accuracy alone.
 
 ## Last verification
 
@@ -83,6 +88,21 @@ ablation — the identical architecture with the inner update frozen — the pri
   from 0.847 to 0.578 with disjoint intervals, and resolves the mLSTM parity failure that
   Track 02 left open (0.589 on identical data).
 
+**Track 04 — TTT** (claim level: `educational implementation`)
+
+- Primary source retrieved and read in-environment; the inner update, the inner learning
+  rate, and the batch-gradient-descent instantiation are transcribed from equations (4)-(6),
+  Subsection 2.7, and Theorem 1.
+- Added `tracks/ttt/` (`layer`, `model`, `config`, `README`), the rebinding task, the
+  experiment suite, and the report generator.
+- 21 invariant tests, including the source's Theorem 1 (batch GD with a linear inner model
+  is exactly causal linear attention) and the track's acceptance criterion: a forward pass
+  performs gradient descent while mutating **no** `nn.Parameter`.
+- 79 records committed under `results/ttt/`, all `status="success"`.
+- The required ablation is decisive: freezing the inner loop drops post-shift accuracy from
+  0.371 to 0.221 and puts selective recall exactly at chance, because the layer becomes a
+  position-independent function of each token.
+
 ### Corrected defects worth carrying forward
 
 The first version of the KAN suite trained every model at one shared learning rate. The
@@ -99,6 +119,13 @@ were all unremarkable; only a hand-computed two-step comparison caught it. Every
 track that stabilizes a recurrence must carry the same kind of test. Details in
 `reports/xlstm.md`, section 8.
 
+**A dataset label is not a dataset identity.** The TTT context-scaling study reused the
+label `rebinding` for a differently-sized split, and because record filenames keyed only on
+`(architecture, variant, dataset, seed)` it silently overwrote three seeds of the main
+task — leaving groups that were incomplete *and* mixed two datasets. Filenames now include
+the dataset fingerprint, and `scripts/validate_results.py` fails when one aggregation group
+contains more than one fingerprint. Details in `reports/ttt.md`, section 8.
+
 ### Unresolved
 
 - `Tensor.backward` is unannotated in the Torch distribution, so one narrowly scoped
@@ -106,9 +133,12 @@ track that stabilizes a recurrence must carry the same kind of test. Details in
   justification.
 - Adaptive grid updates are implemented and tested but excluded from the reported KAN
   training loop; they are listed as deviation 4 and as a next experiment.
-- Eight architecture tracks remain queued (TTT, Titans, Nested Learning/Hope,
-  PFN/TabPFN, Relational FM, Sparse MoE, Flow Matching, JEPA) plus the final integration
-  prompt.
+- Seven architecture tracks remain queued (Titans, Nested Learning/Hope, PFN/TabPFN,
+  Relational FM, Sparse MoE, Flow Matching, JEPA) plus the final integration prompt.
+- TTT runs pure online gradient descent (`b = 1`). The source reports mini-batch TTT with
+  `b = 16` as its single largest quality gain, so this track's numbers are knowingly below
+  the paper's configuration and its online-vs-batch comparison is not a test of the
+  source's claim.
 - Mamba-3's MIMO contribution **cannot be evaluated by this repository**: its benefit is
   decode-time arithmetic intensity on an accelerator, and a Python scan on CPU has no
   memory-bound decode to improve. Recorded as an untestable claim, not a negative result.
@@ -126,3 +156,16 @@ track that stabilizes a recurrence must carry the same kind of test. Details in
 Torch metadata. The quality gate is therefore executed with the interpreter's installed
 toolchain (`python -m ruff`, `python -m mypy`, `python -m pytest`), which runs the identical
 commands CI runs through Poetry.
+
+### Last metadata-only verification
+
+- Read Zenodo's current GitHub `.zenodo.json` guidance and deposition metadata field
+  documentation.
+- Queried Zenodo's license vocabulary endpoint and confirmed the MIT license identifier is
+  `mit`.
+- Ran `python -m json.tool .zenodo.json`.
+- Attempted validation against Zenodo's legacy deposition JSON schema. That schema rejects
+  `version` and `language`, even though Zenodo's current GitHub `.zenodo.json` guidance
+  includes both fields; the file keeps those software-specific metadata fields.
+- Full source quality gate not rerun because only repository archive metadata and status
+  documentation changed.
