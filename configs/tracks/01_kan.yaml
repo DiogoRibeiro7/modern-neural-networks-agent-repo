@@ -1,10 +1,43 @@
 track: 01_kan
 model: kan
 task: function_approximation
+claim_level: educational implementation
+
+# Optimization. Applied identically to the KAN and to every baseline and ablation.
 seed: 1729
-batch_size: 256
-epochs: 200
-learning_rate: 0.001
-parameter_budget: null
+seeds: [0, 1, 2, 3, 4]
+batch_size: 128
+epochs: 120
+learning_rate: 0.005
+optimizer: adam
+cosine_schedule: true
+
+# Architecture.
+grid_size: 5
+spline_order: 3
+grid_range: [-1.0, 1.0]
+base_scale: 1.0
+spline_noise_scale: 0.1
+regularization_weight: 0.0
+
+# Diagnostics.
+n_samples: 1500
+noise_std: 0.01
+univariate_widths: [1, 3, 1]
+compositional_widths: [2, 5, 1]
+
+# Sensitivity sweeps.
+grid_sweep: [3, 5, 10, 20]
+order_sweep: [1, 2, 3]
+regularization_sweep: [0.0, 0.001, 0.01]
+
+# Real benchmark.
+benchmark_dataset: sklearn-diabetes
+benchmark_baselines: [mlp, random_forest, gradient_boosting]
+
+parameter_budget: matched-to-kan
 compute_budget: null
-notes: "Scaffold configuration; tune only after the baseline is established."
+notes: >-
+  The MLP baseline's hidden width is searched so its parameter count matches the KAN's.
+  Comparing at equal widths would give the KAN a ~9x capacity advantage, since an edge
+  stores grid_size + spline_order + 1 numbers where a linear edge stores one.

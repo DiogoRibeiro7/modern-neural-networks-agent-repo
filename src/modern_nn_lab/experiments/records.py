@@ -287,8 +287,20 @@ def load_record(path: Path | str) -> ExperimentRecord:
     return ExperimentRecord.model_validate(payload)
 
 
+ARTEFACT_DIRNAME = "artefacts"
+"""Subdirectory holding derived data that is *not* an experiment record.
+
+Serialized edge functions, routing traces, and similar diagnostics belong under
+``results/<track>/artefacts/``. They are committed so figures stay reproducible, but they
+do not satisfy the record schema and must not be validated against it.
+"""
+
+
 def iter_records(root: Path | str = RESULTS_ROOT) -> Iterator[ExperimentRecord]:
     """Yield every record under ``root`` in sorted path order.
+
+    Files under an :data:`ARTEFACT_DIRNAME` directory are skipped: they are derived
+    diagnostics, not records.
 
     Args:
         root: Directory searched recursively for ``*.json`` files.
@@ -298,6 +310,8 @@ def iter_records(root: Path | str = RESULTS_ROOT) -> Iterator[ExperimentRecord]:
     """
 
     for path in sorted(Path(root).rglob("*.json")):
+        if ARTEFACT_DIRNAME in path.parts:
+            continue
         yield load_record(path)
 
 

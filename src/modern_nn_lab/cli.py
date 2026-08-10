@@ -34,6 +34,35 @@ def list_tracks() -> None:
     console.print(table)
 
 
+@app.command("run-track")
+def run_track(
+    track: str = typer.Argument(..., help="Registry key, for example 'kan'."),
+    output_dir: Path | None = typer.Option(None, help="Destination for records."),
+    quick: bool = typer.Option(
+        False, help="Reduced seeds and epochs for smoke-testing. Not for reporting."
+    ),
+) -> None:
+    """Run a track's full experiment suite and write raw records.
+
+    The suite writes one record per seed per variant. Nothing is aggregated here;
+    summarize afterwards with ``modern-nn summarize``.
+    """
+
+    from modern_nn_lab.experiments.tracks import default_output_dir, get_track_suite
+
+    try:
+        suite = get_track_suite(track)
+    except KeyError as error:
+        console.print(f"[red]{error}[/red]")
+        raise typer.Exit(code=1) from error
+
+    destination = output_dir or default_output_dir(track)
+    if quick:
+        console.print("[yellow]Quick mode: reduced seeds and epochs. Do not report these.[/yellow]")
+    suite(destination, quick=quick)
+    console.print(f"[green]Wrote records to {destination}[/green]")
+
+
 @app.command("summarize")
 def summarize(
     results: Path = typer.Option(RESULTS_ROOT, help="Directory holding committed records."),

@@ -38,6 +38,7 @@ TRACKS: tuple[TrackSpec, ...] = (
         "general",
         "Must edges be scalar weights?",
         "educational implementation",
+        "complete",
     ),
     TrackSpec(
         "xlstm",

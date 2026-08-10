@@ -12,7 +12,7 @@ pipeline with a Python 3.11-3.13 test matrix. No architecture track status chang
 
 | Track | Specification | Core implementation | Tests | Benchmarks | Report | Status |
 |---|---:|---:|---:|---:|---:|---|
-| KAN | 0% | 0% | 0% | 0% | 0% | queued |
+| KAN | 100% | 100% | 100% | 100% | 100% | complete |
 | xLSTM | 0% | 0% | 0% | 0% | 0% | queued |
 | Mamba-3 | 0% | 0% | 0% | 0% | 0% | queued |
 | TTT | 0% | 0% | 0% | 0% | 0% | queued |
@@ -24,37 +24,52 @@ pipeline with a Python 3.11-3.13 test matrix. No architecture track status chang
 | Flow Matching | 0% | 0% | 0% | 0% | 0% | queued |
 | JEPA | 0% | 0% | 0% | 0% | 0% | queued |
 
-Milestone **M0 (repository contracts)** is complete: the package installs, the registry
-works, the scaffold validator passes, CI runs, and the shared experiment schema is
-implemented and enforced.
+Milestone **M0 (repository contracts)** is complete. Track 01 (KAN) is the first track
+completed end to end and establishes the conventions every later track follows.
 
 ## Next atomic milestone
 
-Execute `prompts/01_kan.md`: verify primary sources, write the track mathematical
-specification, add failing invariant tests, then implement KAN layers on top of the shared
-harness.
+Execute `prompts/02_xlstm.md`: implement compact sLSTM and mLSTM cells with exponential
+gating and the normalizer/stabilizer states, add the shared synthetic sequence tasks
+(copy, selective recall, state tracking), and compare against LSTM, GRU, and a
+matched-parameter causal Transformer.
 
 ## Last verification
 
-- Added `modern_nn_lab.experiments` with `records`, `data`, `training`, `evaluation`,
-  `profiling`, and `runner` modules.
-- Added `results/`, `scripts/validate_results.py`, a CI record-audit job, and the
-  `modern-nn summarize` command.
-- Added 59 harness tests covering schema immutability and versioning, fingerprint
-  sensitivity, split disjointness, train-only standardization, batching alignment,
-  training determinism, divergence reporting, refusal to aggregate diverged runs, and
-  parameter/latency accounting.
+**Track 01 — KAN** (claim level: `educational implementation`)
+
+- Added `tracks/kan/` (`spline`, `layers`, `model`, `config`, `README`), the experiment
+  suite, the report generator, and the figure script.
+- 37 invariant tests: partition of unity, non-negativity, local support, the degree-1 hat
+  function, degree-1 coefficient interpolation, least-squares refit accuracy, adaptive-grid
+  monotonicity under a constant feature, hand-computed edge evaluation, forward-pass
+  decomposition, gradient finiteness, deterministic initialization, ablation semantics,
+  function-preserving grid update, and serialization round-trip.
+- 90 records committed under `results/kan/`, all `status="success"`.
 - Ran `python -m ruff check .` — clean.
-- Ran `python -m ruff format --check .` — 34 files formatted.
-- Ran `python -m mypy src` — no issues in 24 source files.
-- Ran `python -m pytest` — 65 passed.
-- Ran `python scripts/validate_scaffold.py` and `python scripts/validate_results.py`.
+- Ran `python -m ruff format --check .` — 47 files formatted.
+- Ran `python -m mypy src` — no issues in 32 source files.
+- Ran `python -m pytest` — 102 passed.
+- Ran `python scripts/validate_scaffold.py`, `python scripts/validate_results.py`,
+  `python scripts/report_kan.py`, `python scripts/plot_kan.py`.
+
+### Corrected defect worth carrying forward
+
+The first version of the KAN suite trained every model at one shared learning rate. The
+MLP baseline was badly under-trained at that rate, producing an apparent 1000x advantage
+for the KAN that collapsed to roughly 5x once each architecture selected its learning rate
+from the same grid on validation data. **Every later track must use per-architecture
+learning-rate selection**, and any margin of several orders of magnitude should be treated
+as a suspected baseline failure until checked. Details in `reports/kan.md`, section 9.
 
 ### Unresolved
 
 - `Tensor.backward` is unannotated in the Torch distribution, so one narrowly scoped
   `# type: ignore[no-untyped-call]` remains in `experiments/training.py` with an inline
   justification.
+- Adaptive grid updates are implemented and tested but excluded from the reported KAN
+  training loop; they are listed as deviation 4 and as a next experiment.
+- Ten architecture tracks remain queued.
 
 ### Known environment issue
 

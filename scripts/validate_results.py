@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from modern_nn_lab.experiments.records import (  # noqa: E402  (path bootstrap must run first)
+    ARTEFACT_DIRNAME,
     RESULT_SCHEMA_VERSION,
     load_record,
 )
@@ -33,7 +34,7 @@ def main() -> int:
         print("No results/ directory; nothing to validate.")
         return 0
 
-    paths = sorted(RESULTS.rglob("*.json"))
+    paths = [path for path in sorted(RESULTS.rglob("*.json")) if ARTEFACT_DIRNAME not in path.parts]
     if not paths:
         print("No result records committed yet.")
         return 0

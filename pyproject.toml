@@ -67,6 +67,8 @@ ignore = [
     "D203", # incompatible with D211
     "D213", # incompatible with D212
     "PLR0913", # research entry points legitimately take many explicit hyperparameters
+    "PLR2004", # tensor-rank and shape literals read better inline than as named constants
+    "PLC0415", # heavy imports (Torch models, scikit-learn) are deferred on purpose
 ]
 
 [tool.ruff.lint.per-file-ignores]
