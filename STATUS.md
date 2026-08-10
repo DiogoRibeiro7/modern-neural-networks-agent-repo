@@ -29,7 +29,7 @@ complete end to end and establish the conventions every later track follows.
 
 ## Next atomic milestone
 
-Execute `prompts/03_mamba3.md`: verify the primary source, implement a transparent
+Track 03 (Mamba-3 / modern SSMs): verify the primary source, implement a transparent
 selective state-space recurrence, and reuse the shared sequence tasks from Track 02 so the
 comparison against xLSTM, LSTM, GRU, and the Transformer is on identical data.
 

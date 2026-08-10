@@ -14,7 +14,8 @@ the number of architectures added.
 3. Every experiment must serialize a machine-readable record that satisfies
    [`docs/experiment_contract.md`](docs/experiment_contract.md).
 4. Plots and tables must be regenerable from saved raw results. Hard-coded numbers in a
-   report are a defect.
+   report are a defect; use the generated-block markers described in
+   `modern_nn_lab.experiments.reporting`.
 5. Negative results, divergences, and instabilities are reported, not deleted.
 
 ## Development setup
@@ -52,7 +53,8 @@ the same line or immediately above it.
 
 ## Adding or extending a track
 
-Follow the phase order in [`prompts/00_master_agent_prompt.md`](prompts/00_master_agent_prompt.md):
+Follow the phase order used by every completed track (see `reports/kan.md` and
+`reports/xlstm.md` for worked examples):
 
 1. **Specification** — `src/modern_nn_lab/tracks/<track>/README.md` with the mathematical
    formulation, tensor-shape table, equation-to-code mapping, complexity, stability notes,
@@ -80,7 +82,9 @@ and input validation wherever misuse is plausible.
 
 ## Data
 
-Never commit large raw datasets. Download through a documented adapter into `data/raw/`,
+Raw experiment records are committed under `results/<track>/`; derived diagnostics that
+do not satisfy the record schema go under `results/<track>/artefacts/`. Never commit large
+raw datasets. Download through a documented adapter into `data/raw/`,
 which is ignored by Git. Keep raw experiment records small enough to commit under
 `results/`, so figures remain reproducible.
 
