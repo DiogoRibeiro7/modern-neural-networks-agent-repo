@@ -18,6 +18,13 @@ experimental results, as defined in [`docs/claim_policy.md`](docs/claim_policy.m
   orchestration that is the sole writer of records.
 - `results/` for committed raw records, `scripts/validate_results.py`, a CI job that
   re-validates every record against the current schema, and `modern-nn summarize`.
+- **Track 01 — Kolmogorov-Arnold Networks** (claim level: `educational implementation`):
+  B-spline machinery, KAN layer and network, matched-budget MLP baseline, two ablations,
+  hyperparameter sensitivity sweeps, a tabular benchmark against tree ensembles, 37
+  invariant tests, 90 committed records, and `reports/kan.md`.
+- `modern-nn run-track`, per-track experiment suites, non-Torch baseline records
+  (`experiments/external.py`), and marker-based report generation
+  (`experiments/reporting.py`).
 
 - MIT license, contribution guide, code of conduct, security policy, and citation metadata.
 - Issue and pull-request templates, `CODEOWNERS`, and Dependabot configuration.

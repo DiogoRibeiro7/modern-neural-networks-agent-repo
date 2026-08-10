@@ -20,7 +20,6 @@ from modern_nn_lab.experiments.evaluation import (
     root_mean_squared_error,
 )
 from modern_nn_lab.experiments.records import MetricValue
-
 from tests.conftest import make_record
 
 

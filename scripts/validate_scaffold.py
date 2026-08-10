@@ -41,16 +41,30 @@ CONFIG_BY_KEY = {
 }
 
 
+REPORT_BY_KEY = {key: f"{key}.md" for key in PROMPT_BY_KEY}
+
+
 def main() -> None:
-    """Raise ``FileNotFoundError`` when required scaffold files are absent."""
+    """Raise ``FileNotFoundError`` when required scaffold files are absent.
+
+    A track marked ``complete`` must additionally carry its specification README and its
+    report, so the registry cannot claim more than the repository contains.
+    """
 
     missing: list[str] = []
     for track in TRACKS:
-        required = (
-            ROOT / "src" / "modern_nn_lab" / "tracks" / track.key / "__init__.py",
+        package = ROOT / "src" / "modern_nn_lab" / "tracks" / track.key
+        required = [
+            package / "__init__.py",
             ROOT / "prompts" / PROMPT_BY_KEY[track.key],
             ROOT / "configs" / "tracks" / CONFIG_BY_KEY[track.key],
-        )
+        ]
+        if track.status == "complete":
+            required += [
+                package / "README.md",
+                ROOT / "reports" / REPORT_BY_KEY[track.key],
+                ROOT / "results" / track.key,
+            ]
         missing.extend(str(path.relative_to(ROOT)) for path in required if not path.exists())
 
     if missing:
