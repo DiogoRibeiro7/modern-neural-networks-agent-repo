@@ -1,10 +1,44 @@
 track: 03_mamba3
-model: mamba3_compact
-task: sequence_state_tracking
+model: mamba3
+task: sequence_diagnostics
+claim_level: educational implementation
+
+# Optimization. Identical to Track 02 so the two tracks' records are comparable.
 seed: 1729
-batch_size: 128
-epochs: 100
-learning_rate: 0.001
-parameter_budget: null
+seeds: [0, 1, 2, 3, 4]
+batch_size: 64
+epochs: 50
+optimizer: adam
+cosine_schedule: true
+learning_rate_grid: [0.001, 0.003]   # searched per architecture on validation
+
+# Architecture. Each mechanism flag maps to one contribution of the primary source.
+d_model: 32
+n_blocks: 1
+heads: 2
+state_size: 8          # even, because rotations act on 2-D pairs
+rank: 2                # MIMO rank R; 1 is SISO
+trapezoidal: true      # false -> Mamba-1/2 exponential-Euler
+rotary: true           # false -> real non-negative transition
+
+# Diagnostics, generated with the same parameters and seed as Track 02.
+n_sequences: 500
+copy_payload_len: 4
+copy_delay: 8
+recall_pairs: 4
+recall_keys: 8
+recall_values: 8
+state_tracking_seq_len: 16
+throughput_lengths: [16, 32, 64, 128]
+
+baselines: [lstm, gru, transformer]
+ablations: [euler-discretization, no-rotation, siso-rank-1]
+
+parameter_budget: matched-to-mamba3
 compute_budget: null
-notes: "Scaffold configuration; tune only after the baseline is established."
+notes: >-
+  The recurrence is stepped in Python, so no latency or throughput number from this track
+  is evidence about Mamba-3's achievable speed, and the paper's arithmetic-intensity and
+  decode-latency claims are untestable here. The no-rotation ablation is a pre-registered
+  prediction: the source argues real transitions cannot represent parity, and state
+  tracking is parity.

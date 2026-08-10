@@ -44,7 +44,6 @@ The initial roadmap covers eleven tracks:
 
 ```text
 modern-neural-networks-lab/
-├── AGENTS.md
 ├── README.md
 ├── pyproject.toml
 ├── configs/
@@ -58,18 +57,17 @@ modern-neural-networks-lab/
 │   ├── mathematical_notation.md
 │   ├── source_registry.md
 │   └── track_matrix.md
-├── prompts/
-│   ├── 00_master_agent_prompt.md
-│   ├── 01_kan.md
-│   └── ...
 ├── src/modern_nn_lab/
 │   ├── cli.py
 │   ├── contracts.py
 │   ├── registry.py
 │   ├── reproducibility.py
+│   ├── experiments/          # records, splits, training loop, profiling, runner
 │   └── tracks/
+├── reports/                  # one report per track
+├── results/                  # committed raw experiment records
 ├── tests/
-└── artifacts/                # generated outputs; ignored by Git
+└── artifacts/                # generated figures; ignored by Git
 ```
 
 ## Development order
@@ -98,9 +96,10 @@ poetry run pytest
 poetry run ruff check .
 poetry run mypy src
 poetry run modern-nn list-tracks
+poetry run modern-nn summarize        # aggregate committed records across seeds
 ```
 
-The project begins with scaffolding and contract tests. Track implementations are intentionally incomplete until the coding agent executes the prompts in `prompts/`.
+Track status is tracked in [`STATUS.md`](STATUS.md); completed tracks carry a specification README beside their code and a report under [`reports/`](reports/).
 
 ## Definition of done for a track
 

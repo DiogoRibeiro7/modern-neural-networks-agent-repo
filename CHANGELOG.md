@@ -12,6 +12,40 @@ experimental results, as defined in [`docs/claim_policy.md`](docs/claim_policy.m
 
 ### Added
 
+- Shared experiment harness under `modern_nn_lab.experiments`: versioned
+  `ExperimentRecord` schema, leakage-safe splits, one shared supervised training loop,
+  metrics with bootstrap intervals, capacity/latency profiling, and multi-seed
+  orchestration that is the sole writer of records.
+- `results/` for committed raw records, `scripts/validate_results.py`, a CI job that
+  re-validates every record against the current schema, and `modern-nn summarize`.
+- **Track 01 — Kolmogorov-Arnold Networks** (claim level: `educational implementation`):
+  B-spline machinery, KAN layer and network, matched-budget MLP baseline, two ablations,
+  hyperparameter sensitivity sweeps, a tabular benchmark against tree ensembles, 37
+  invariant tests, 90 committed records, and `reports/kan.md`.
+- **Track 02 — xLSTM** (claim level: `educational implementation`): sLSTM and mLSTM cells
+  with exponential gating, normalizer state, and a running-maximum stabilizer; LSTM, GRU,
+  and causal-Transformer baselines matched by width to the xLSTM parameter budget; the
+  gating ablation; shared copy / selective-recall / state-tracking diagnostics; a
+  context-scaling study; 41 invariant tests; 108 committed records; and `reports/xlstm.md`.
+- **Track 03 — Mamba-3** (claim level: `educational implementation`): exponential-trapezoidal
+  discretization, complex-valued dynamics as data-dependent rotary embeddings, and a MIMO
+  state update, each removable by a flag that recovers the prior method exactly; LSTM, GRU,
+  and Transformer baselines matched by width; 22 invariant tests including four equality
+  assertions against the source's own equations; 105 committed records; `reports/mamba3.md`.
+- **Track 04 — Test-Time Training** (claim level: `educational implementation`): TTT-Linear
+  and TTT-MLP whose hidden state is an inner model trained by gradient descent during the
+  forward pass; the required frozen-learner ablation; a batch-gradient-descent ablation the
+  source proves is linear attention; a new rebinding task that overwrites a binding
+  mid-sequence; 21 invariant tests; 79 committed records; `reports/ttt.md`.
+- Record filenames now include the dataset fingerprint, and the result validator fails when
+  one aggregation group mixes datasets — a label collision had silently overwritten records.
+- `modern_nn_lab.models.sequence`: shared token-sequence scaffolding and baselines,
+  promoted out of the xLSTM track once a second track needed them.
+- A `Split` protocol so one experiment runner serves tabular and sequence splits alike.
+- `modern-nn run-track`, per-track experiment suites, non-Torch baseline records
+  (`experiments/external.py`), and marker-based report generation
+  (`experiments/reporting.py`).
+
 - MIT license, contribution guide, code of conduct, security policy, and citation metadata.
 - Issue and pull-request templates, `CODEOWNERS`, and Dependabot configuration.
 - CodeQL analysis workflow and an extended CI matrix with coverage reporting.

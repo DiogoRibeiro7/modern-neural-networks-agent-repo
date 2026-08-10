@@ -67,11 +67,17 @@ ignore = [
     "D203", # incompatible with D211
     "D213", # incompatible with D212
     "PLR0913", # research entry points legitimately take many explicit hyperparameters
+    "PLR2004", # tensor-rank and shape literals read better inline than as named constants
+    "PLC0415", # heavy imports (Torch models, scikit-learn) are deferred on purpose
 ]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["D", "PLR2004", "ARG"]
 "scripts/*" = ["D", "PLR2004"]
+
+[tool.ruff.lint.flake8-bugbear]
+# Typer expresses CLI metadata through call-valued defaults; they are not mutable state.
+extend-immutable-calls = ["typer.Option", "typer.Argument"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
@@ -94,7 +100,7 @@ ignore_missing_imports = true
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-ra --strict-markers --strict-config"
-pythonpath = ["src"]
+pythonpath = ["src", "."]
 markers = [
     "slow: experiments that take more than a few seconds",
 ]
