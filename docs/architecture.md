@@ -35,15 +35,47 @@ tracks/<track>/
 
 Track code must not know where results are stored. Experiment code handles I/O.
 
-## Experiment layer to add during development
+## Experiment layer
 
 ```text
 src/modern_nn_lab/experiments/
-├── runner.py
-├── training.py
-├── evaluation.py
-├── profiling.py
-└── tasks/
+├── records.py      # versioned ExperimentRecord schema, fingerprints, provenance
+├── data.py         # leakage-safe splits and training-only standardization
+├── training.py     # the single shared supervised loop
+├── evaluation.py   # metrics, bootstrap intervals, across-seed aggregation
+├── profiling.py    # parameter/activated-parameter counts, latency, peak memory
+└── runner.py       # multi-seed orchestration; the only writer of records
 ```
 
-The agent should not introduce a large framework prematurely. Add shared abstractions only after two tracks demonstrate the same need.
+Deliberately small. It exists to guarantee three properties that cannot be enforced by
+convention alone:
+
+1. **A target and its baseline are optimized by identical code.** `train_supervised` is
+   the only training loop, so an apparent quality difference cannot come from a
+   different loop, schedule, or clipping rule.
+2. **No record can silently omit a contract field.** `runner.run_seeded_experiment` is
+   the only place that constructs an `ExperimentRecord`.
+3. **Failures survive.** A non-finite loss produces a record with `status="diverged"`;
+   `aggregate_runs` refuses to average over it.
+
+Split responsibilities:
+
+| Concern | Owner | Never does |
+|---|---|---|
+| Mechanism | `tracks/<track>/` | I/O, result storage, seeding policy |
+| Data and splits | `experiments/data.py` | model-specific preprocessing |
+| Optimization | `experiments/training.py` | metric selection, storage |
+| Evidence | `experiments/records.py`, `runner.py` | model construction |
+
+Add further shared abstractions only after two tracks demonstrate the same need.
+
+## Result storage
+
+```text
+results/<track>/<architecture>__<variant>__<dataset>__seed<k>.json
+```
+
+Records are committed. Figures under `artifacts/` are ignored by Git and must be
+regenerable from `results/`. `scripts/validate_results.py` re-validates every committed
+record against the current schema in CI, so a schema change cannot silently orphan past
+evidence.
