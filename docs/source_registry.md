@@ -6,7 +6,7 @@ This file is a starting point, not permission to skip source verification. The c
 |---|---|
 | KAN | Liu et al., *KAN: Kolmogorov-Arnold Networks*, arXiv:2404.19756 |
 | xLSTM | Beck et al., *xLSTM: Extended Long Short-Term Memory*, arXiv:2405.04517 |
-| Mamba-3 | Lahoti et al., *Mamba-3: Improved Sequence Modeling using State Space Principles*, arXiv:2603.15569 |
+| Mamba-3 | Lahoti et al., *Mamba-3: Improved Sequence Modeling using State Space Principles*, arXiv:2603.15569v1 (ICLR 2026) — **verified** |
 | TTT | Sun et al., *Learning to (Learn at Test Time): RNNs with Expressive Hidden States*, arXiv:2407.04620 |
 | Titans | Behrouz et al., *Titans: Learning to Memorize at Test Time*, arXiv:2501.00663 |
 | Nested Learning / Hope | Behrouz et al., *Nested Learning: The Illusion of Deep Learning Architectures*, arXiv:2512.24695 |
@@ -59,6 +59,32 @@ diffed inside this environment, and no language-modelling experiment was run. Th
 consequential omission is the systems one: this implementation steps the recurrence in
 Python, so **no throughput number in this track is evidence about xLSTM's achievable
 speed**.
+
+### Track 03 — Mamba-3
+
+| Field | Value |
+|---|---|
+| Primary source | Lahoti, Li, Chen, Wang, Bick, Kolter, Dao, Gu, *Mamba-3: Improved Sequence Modeling using State Space Principles*, arXiv:2603.15569v1, ICLR 2026 |
+| Retrieved | The PDF was fetched and read inside this environment. Sections 2-3.3 and Table 1 were read directly; the equations in the track README are transcribed from Propositions 1-4 and equations (1)-(14), not reconstructed from a summary. |
+| Formulation used | Exponential-trapezoidal discretization (Prop. 1, eqs. 5-6); complex dynamics via data-dependent rotary embeddings (Props. 2-3, eqs. 8-10); MIMO state update (eqs. 12-14) |
+| Official repository | Triton kernels are referenced by the paper; **not vendored and not invoked**. No reference-integration claim is made. |
+| Reference comparison | **None run.** No number in `reports/mamba3.md` is compared against the paper's. |
+| Datasets | The same three synthetic sequence tasks as Track 02, generated in-repo with identical parameters and seed. No external data. |
+| Deviations | Six, enumerated in [`src/modern_nn_lab/tracks/mamba3/README.md`](../src/modern_nn_lab/tracks/mamba3/README.md#known-approximations-and-deviations-from-the-primary-source) |
+| Claim level | `educational implementation` |
+
+**What was verified and what was not.** The recurrence, the discretization coefficients,
+and the two rotation formulations were transcribed from the paper and are checked against
+each other in the tests: the Euler ablation reproduces Table 1's exponential-Euler row,
+the trapezoidal coefficients match Proposition 1 term by term, the RoPE form is asserted
+equal to the block-rotation form, and the MIMO update is asserted equal to the sum of
+rank-1 recurrences from equations (12)-(14).
+
+Not verified: appendices A-B (the proofs), the released Triton kernels, the block
+architecture of Section 3.4, and every experimental result in the paper. Sections 4
+onwards were not read. The systems claims — arithmetic intensity, decode latency, kernel
+benchmarks — are **untestable in this implementation** and no attempt is made to evaluate
+them.
 
 ## Source verification checklist
 

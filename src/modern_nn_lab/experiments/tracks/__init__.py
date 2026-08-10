@@ -40,6 +40,11 @@ def get_track_suite(key: str) -> RunTrack:
 
         return xlstm.run
 
+    if key == "mamba3":
+        from modern_nn_lab.experiments.tracks import mamba3
+
+        return mamba3.run
+
     raise KeyError(f"track {key!r} has no runnable experiment suite yet")
 
 
