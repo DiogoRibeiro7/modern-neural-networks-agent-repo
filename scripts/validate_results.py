@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from modern_nn_lab.experiments.records import (  # noqa: E402  (path bootstrap must run first)
+    ARTEFACT_DIRNAME,
     RESULT_SCHEMA_VERSION,
     load_record,
 )
@@ -33,13 +34,14 @@ def main() -> int:
         print("No results/ directory; nothing to validate.")
         return 0
 
-    paths = sorted(RESULTS.rglob("*.json"))
+    paths = [path for path in sorted(RESULTS.rglob("*.json")) if ARTEFACT_DIRNAME not in path.parts]
     if not paths:
         print("No result records committed yet.")
         return 0
 
     failures: list[str] = []
     statuses: dict[str, int] = {}
+    fingerprints: dict[tuple[str, str, str, str], set[str]] = {}
     for path in paths:
         try:
             record = load_record(path)
@@ -48,6 +50,13 @@ def main() -> int:
             failures.append(f"{path.relative_to(ROOT)}: {error}")
             continue
         statuses[record.status] = statuses.get(record.status, 0) + 1
+
+        # Records grouped together for aggregation must come from the same data. Two
+        # splits sharing a dataset label but differing in parameters would otherwise be
+        # averaged together silently.
+        key = (record.track, record.architecture, record.variant or "default", record.dataset)
+        if record.dataset_fingerprint is not None:
+            fingerprints.setdefault(key, set()).add(record.dataset_fingerprint)
 
     print(f"Schema version {RESULT_SCHEMA_VERSION}: checked {len(paths)} record(s).")
     for status, count in sorted(statuses.items()):

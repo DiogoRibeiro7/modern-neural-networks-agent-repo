@@ -1,6 +1,7 @@
 {
   "title": "Modern Neural Networks Lab",
   "version": "0.1.0",
+  "publication_date": "2026-08-08",
   "description": "Research-grade implementations and comparisons of modern neural-network architectures. Each architecture track carries a mathematical specification, invariant tests, matched-budget baselines, ablations, machine-readable experiment records, and a report whose claim level is bounded by an explicit claim policy.",
   "creators": [
     {
@@ -9,9 +10,17 @@
       "affiliation": "ESMAD - School of Media Arts and Design, Polytechnic of Porto"
     }
   ],
+  "contributors": [
+    {
+      "name": "Ribeiro, Diogo",
+      "orcid": "0009-0001-2022-7072",
+      "affiliation": "ESMAD - School of Media Arts and Design, Polytechnic of Porto",
+      "type": "RightsHolder"
+    }
+  ],
   "upload_type": "software",
   "access_right": "open",
-  "license": "MIT",
+  "license": "mit",
   "language": "eng",
   "keywords": [
     "neural networks",
@@ -19,14 +28,30 @@
     "deep learning",
     "research software",
     "reproducibility",
-    "benchmarking"
+    "benchmarking",
+    "PyTorch",
+    "Kolmogorov-Arnold Networks",
+    "xLSTM",
+    "state space models"
   ],
+  "notes": "Research software archive. Completed architecture tracks are labelled by claim level in the repository reports; no state-of-the-art, paper-reproduction, or official-implementation-equivalence claim is made unless a report explicitly satisfies the repository claim policy.",
   "related_identifiers": [
     {
       "identifier": "https://github.com/DiogoRibeiro7/modern-neural-networks-agent-repo",
-      "relation": "isSupplementTo",
+      "relation": "isDerivedFrom",
       "resource_type": "software",
       "scheme": "url"
+    },
+    {
+      "identifier": "https://github.com/DiogoRibeiro7/modern-neural-networks-agent-repo/tree/main/docs",
+      "relation": "isDocumentedBy",
+      "resource_type": "publication-softwaredocumentation",
+      "scheme": "url"
     }
+  ],
+  "references": [
+    "Liu, Z. et al. KAN: Kolmogorov-Arnold Networks. arXiv:2404.19756.",
+    "Beck, M. et al. xLSTM: Extended Long Short-Term Memory. arXiv:2405.04517.",
+    "Lahoti, A. et al. Mamba-3: Improved Sequence Modeling using State Space Principles. arXiv:2603.15569."
   ]
 }
