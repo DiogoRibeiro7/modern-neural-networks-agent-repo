@@ -10,6 +10,20 @@ experimental results, as defined in [`docs/claim_policy.md`](docs/claim_policy.m
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-08-10
+
+**No code or result changes.** This release exists so that the repository's first archived
+deposit is created: Zenodo's GitHub integration only captures releases published *after*
+the repository is enabled, and it does not archive earlier ones retroactively. Every number
+and every record is identical to `v0.2.0`.
+
+### Changed
+
+- `.zenodo.json` now references the primary sources for all six tracks whose papers were
+  actually read, rather than the first three. Tracks 07 and 08 remain deliberately
+  unreferenced, because no primary source was retrieved for either and citing one would
+  imply it had informed the implementation.
+
 ## [0.2.0] - 2026-08-10
 
 **Scope.** Eight of eleven architecture tracks are complete end to end (KAN, xLSTM,
@@ -106,6 +120,7 @@ published number.
   contract, mathematical notation, milestones, source registry, and track matrix.
 - Track prompts for eleven architecture tracks plus the final integration prompt.
 
-[Unreleased]: https://github.com/DiogoRibeiro7/modern-neural-networks-agent-repo/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/DiogoRibeiro7/modern-neural-networks-agent-repo/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/DiogoRibeiro7/modern-neural-networks-agent-repo/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/DiogoRibeiro7/modern-neural-networks-agent-repo/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/DiogoRibeiro7/modern-neural-networks-agent-repo/releases/tag/v0.1.0

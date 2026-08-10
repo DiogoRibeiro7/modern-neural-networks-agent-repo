@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "modern-neural-networks-lab"
-version = "0.2.0"
+version = "0.2.1"
 description = "Research-grade implementations and comparisons of modern neural-network architectures."
 authors = ["Diogo Ribeiro <hansolo.dj@gmail.com>"]
 license = "MIT"

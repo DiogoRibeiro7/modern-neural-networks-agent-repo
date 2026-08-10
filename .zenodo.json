@@ -1,6 +1,6 @@
 {
   "title": "Modern Neural Networks Lab",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "publication_date": "2026-08-10",
   "description": "Research-grade implementations and comparisons of modern neural-network architectures. Each architecture track carries a mathematical specification, invariant tests, matched-budget baselines, ablations, machine-readable experiment records, and a report whose claim level is bounded by an explicit claim policy.",
   "creators": [
@@ -52,6 +52,9 @@
   "references": [
     "Liu, Z. et al. KAN: Kolmogorov-Arnold Networks. arXiv:2404.19756.",
     "Beck, M. et al. xLSTM: Extended Long Short-Term Memory. arXiv:2405.04517.",
-    "Lahoti, A. et al. Mamba-3: Improved Sequence Modeling using State Space Principles. arXiv:2603.15569."
+    "Lahoti, A. et al. Mamba-3: Improved Sequence Modeling using State Space Principles. arXiv:2603.15569.",
+    "Sun, Y. et al. Learning to (Learn at Test Time): RNNs with Expressive Hidden States. arXiv:2407.04620.",
+    "Behrouz, A., Zhong, P., Mirrokni, V. Titans: Learning to Memorize at Test Time. arXiv:2501.00663.",
+    "Behrouz, A., Razaviyayn, M., Zhong, P., Mirrokni, V. Nested Learning: The Illusion of Deep Learning Architectures. arXiv:2512.24695."
   ]
 }
