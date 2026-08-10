@@ -1,11 +1,16 @@
-"""Records for non-Torch baselines.
+"""Records for evaluations that do not go through the shared training loop.
 
 Several tracks require a strong classical baseline — a gradient-boosted tree ensemble
 for tabular data, for example. Those estimators do not go through the shared training
 loop, but they must still produce records under the same contract, on the same split,
 with the same metric. Otherwise the comparison is not auditable.
 
-This module is the single place where that happens.
+Some tracks also evaluate over a *distribution of tasks* rather than one split, where
+the unit of evaluation is a task and not a row. Those go through
+:func:`run_meta_evaluation`.
+
+This module is the single place where either happens, so the number of things that
+can construct a record stays at two.
 """
 
 from __future__ import annotations
@@ -157,6 +162,85 @@ def run_external_baseline(
             hardware=hardware,
             precision="float64",
             config={**split.metadata, **spec.extra_config},
+            status="success",
+            notes=spec.notes,
+        )
+        records.append(record)
+        paths.append(save_record(record, output_dir))
+
+    return RunGroup(spec=spec, records=tuple(records), paths=tuple(paths))
+
+
+def run_meta_evaluation(
+    evaluate: Callable[[int], tuple[float, dict[str, float], dict[str, Any]]],
+    *,
+    spec: RunSpec,
+    dataset: str,
+    split_strategy: str,
+    output_dir: Path | str,
+    seeds: Sequence[int],
+    dataset_fingerprint: str | None = None,
+    parameter_count: int = 0,
+) -> RunGroup:
+    """Write records for an evaluation whose unit is a task rather than a row.
+
+    A Prior-Fitted Network is scored over a *distribution* of datasets: for each seed it
+    is handed many independently sampled tasks and asked about their queries. There is no
+    single train/test split to hand to the runner, so the caller supplies a callable that
+    performs one seed's evaluation and returns its metrics.
+
+    Args:
+        evaluate: Maps a seed to ``(primary_value, secondary_metrics, extra_config)``.
+        spec: Identity and reporting metadata.
+        dataset: Dataset label recorded with the results.
+        split_strategy: Description of how tasks were sampled.
+        output_dir: Directory receiving the JSON records.
+        seeds: Seeds to run.
+        dataset_fingerprint: Optional fingerprint distinguishing task distributions that
+            share a label.
+        parameter_count: Model parameter count, when meaningful.
+
+    Returns:
+        A :class:`~modern_nn_lab.experiments.runner.RunGroup`.
+
+    Raises:
+        ValueError: If ``seeds`` is empty.
+    """
+
+    if not seeds:
+        raise ValueError("seeds must not be empty")
+
+    hardware = describe_hardware("cpu")
+    commit = current_git_commit()
+    records: list[ExperimentRecord] = []
+    paths: list[Path] = []
+
+    for seed in seeds:
+        with Stopwatch() as watch:
+            value, secondary, extra = evaluate(seed)
+
+        record = ExperimentRecord(
+            track=spec.track,
+            architecture=spec.architecture,
+            architecture_version=spec.architecture_version,
+            variant=spec.variant,
+            git_commit=commit,
+            dataset=dataset,
+            dataset_fingerprint=dataset_fingerprint,
+            split_strategy=split_strategy,
+            seed=seed,
+            optimizer="prior fitting" if parameter_count else "none",
+            parameter_count=parameter_count,
+            train_wall_clock_s=watch.elapsed_s,
+            primary_metric=MetricValue(
+                name=spec.metric_name,
+                value=value,
+                higher_is_better=spec.higher_is_better,
+            ),
+            secondary_metrics=secondary,
+            hardware=hardware,
+            precision=spec.precision,
+            config={**spec.extra_config, **extra},
             status="success",
             notes=spec.notes,
         )

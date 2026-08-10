@@ -15,6 +15,23 @@ RunTrack = Callable[..., None]
 """Signature of a track suite: ``run(output_dir: Path, *, quick: bool) -> None``."""
 
 
+def _module(key: str) -> RunTrack:
+    """Import one track suite and return its ``run`` callable.
+
+    Args:
+        key: Registry key.
+
+    Returns:
+        The suite's ``run`` function.
+    """
+
+    import importlib
+
+    module = importlib.import_module(f"modern_nn_lab.experiments.tracks.{key}")
+    runner: RunTrack = module.run
+    return runner
+
+
 def get_track_suite(key: str) -> RunTrack:
     """Return the experiment suite for a track key.
 
@@ -30,35 +47,19 @@ def get_track_suite(key: str) -> RunTrack:
         KeyError: If the track has no runnable suite yet.
     """
 
-    if key == "kan":
-        from modern_nn_lab.experiments.tracks import kan
-
-        return kan.run
-
-    if key == "xlstm":
-        from modern_nn_lab.experiments.tracks import xlstm
-
-        return xlstm.run
-
-    if key == "mamba3":
-        from modern_nn_lab.experiments.tracks import mamba3
-
-        return mamba3.run
-
-    if key == "ttt":
-        from modern_nn_lab.experiments.tracks import ttt
-
-        return ttt.run
-
-    if key == "titans":
-        from modern_nn_lab.experiments.tracks import titans
-
-        return titans.run
-
-    if key == "hope":
-        from modern_nn_lab.experiments.tracks import hope
-
-        return hope.run
+    # A lazy lookup table: importing every track's models to answer "which suites exist"
+    # would make `modern-nn list-tracks` pay for all of them.
+    loaders: dict[str, Callable[[], RunTrack]] = {
+        "kan": lambda: _module("kan"),
+        "xlstm": lambda: _module("xlstm"),
+        "mamba3": lambda: _module("mamba3"),
+        "ttt": lambda: _module("ttt"),
+        "titans": lambda: _module("titans"),
+        "hope": lambda: _module("hope"),
+        "pfn": lambda: _module("pfn"),
+    }
+    if key in loaders:
+        return loaders[key]()
 
     raise KeyError(f"track {key!r} has no runnable experiment suite yet")
 

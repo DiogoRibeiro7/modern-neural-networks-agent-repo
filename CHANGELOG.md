@@ -49,6 +49,16 @@ experimental results, as defined in [`docs/claim_policy.md`](docs/claim_policy.m
   over a continual stream, a continual-diagnostics artefact, 24 tests including an exact
   match against `torch.optim.SGD(momentum=0.9)`, 50 committed records, and `reports/hope.md`.
   The Continuum Memory System and the Hope architecture are deliberately not implemented.
+- **Track 07 — Prior-Fitted Networks** (claim level: `educational implementation`): a PFN
+  that predicts a whole dataset in one forward pass with no per-dataset gradient step, with
+  the two properties that make that well posed — queries cannot attend to one another, and
+  predictions are invariant to context order — asserted rather than assumed; four
+  controllable task priors, of which two are structurally out of reach for the fitted model;
+  in-prior, out-of-prior, small-n, label-noise, class-imbalance, missingness, and
+  feature-count studies against four per-task baselines; a measured break-even count for the
+  PFN's up-front cost; 20 tests; and `reports/pfn.md`. **The official TabPFN checkpoint is
+  not executed** — it is license-gated behind an interactive flow — so the adapter ships
+  behind an optional extra and no TabPFN number appears anywhere in the track.
 - Record filenames now include the dataset fingerprint, and the result validator fails when
   one aggregation group mixes datasets — a label collision had silently overwritten records.
 - `modern_nn_lab.models.sequence`: shared token-sequence scaffolding and baselines,

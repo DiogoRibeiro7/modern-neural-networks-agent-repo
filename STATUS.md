@@ -23,23 +23,27 @@ repository's claim boundaries.
 | TTT | 100% | 100% | 100% | 100% | 100% | complete |
 | Titans | 100% | 100% | 100% | 100% | 100% | complete |
 | Nested Learning / Hope | 100% | partial | 100% | 100% | 100% | complete (prototype) |
-| PFN / TabPFN | 0% | 0% | 0% | 0% | 0% | queued |
+| PFN / TabPFN | 100% | 100% | 100% | 100% | 100% | complete (deliverable A) |
 | Relational FM | 0% | 0% | 0% | 0% | 0% | queued |
 | Sparse MoE | 0% | 0% | 0% | 0% | 0% | queued |
 | Flow Matching | 0% | 0% | 0% | 0% | 0% | queued |
 | JEPA | 0% | 0% | 0% | 0% | 0% | queued |
 
 Milestone **M0 (repository contracts)** is complete. Tracks 01 (KAN), 02 (xLSTM),
-03 (Mamba-3), 04 (TTT), 05 (Titans), and 06 (Nested Learning) are complete end to end and establish the conventions every later track
+03 (Mamba-3), 04 (TTT), 05 (Titans), 06 (Nested Learning), and 07 (PFN) are complete end to end and establish the conventions every later track
 follows. Tracks 02 and 03 share task generation, so their records are directly comparable.
+
+Track 07 is complete for **deliverable A only**. Deliverable B — a benchmark of the
+official TabPFN checkpoint — is blocked by an interactive license gate on the checkpoint
+download and was not executed. The adapter is written and ships behind an optional extra;
+no TabPFN number appears anywhere in the repository.
 
 ## Next atomic milestone
 
-Track 07 (Prior-Fitted Networks / TabPFN). The prompt splits this into two deliverables
-that must not be conflated: a PFN trained from scratch over synthetic task priors, and a
-benchmark of the official TabPFN checkpoint against strong tabular baselines. The
-pretraining advantage of the checkpoint must be stated prominently wherever the two are
-compared.
+Track 08 (Relational Foundation Models). The prompt asks for a prototype that models
+connected tables natively rather than after a flattening join, so the decisive comparison
+is against a strong flattened-table baseline — and the flattening must be a real one, not
+a strawman, or the comparison measures nothing.
 
 ## Last verification
 
@@ -136,6 +140,31 @@ compared.
   implemented**, because sections 7-8 of the source were not read and the prompt permits
   that stage only under an unambiguous mapping. No model in this track is named Hope.
 
+**Track 07 — Prior-Fitted Networks** (claim level: `educational implementation`)
+
+- Added `tracks/pfn/` (`prior`, `model`, `config`, `reference`, `README`), the experiment
+  suite, and the report generator.
+- 20 tests. The decisive three are structural rather than numerical: a query's prediction
+  does not change when another query changes, predictions are invariant to permuting the
+  context, and no parameter moves during prediction. Without those, a good score would say
+  nothing about in-context learning.
+- Studies: in-prior, out-of-prior (two families, one of which no linear rule can express),
+  small-n, label noise, class imbalance, missingness, feature count, and a measured
+  break-even count for the up-front prior-fitting cost. 250 records under `results/pfn/`.
+- **The PFN matches its per-task baselines rather than beating them** (0.884 in prior,
+  identical to logistic regression). It wins on calibration and on cost, not on accuracy.
+- **One of the two out-of-prior families did not behave as predicted.** The `mlp` family
+  was chosen as a failure test and instead tied the best baseline; only `xor` produced a
+  genuine failure, and that failure is a *calibration* failure first — expected calibration
+  error rises tenfold, and one transfer cell lands below chance while staying confident.
+  The report says so and records the weakened evidence as a limitation rather than
+  presenting the surviving family as the plan.
+- **Deliverable B was not executed.** TabPFN 8.2.0 gates its checkpoint behind an
+  interactive browser license acceptance. The adapter is written and documented, the extra
+  is optional, and **no TabPFN number appears anywhere in the repository**. The track's
+  acceptance criterion about pre-training advantage is therefore satisfied vacuously; the
+  disclosure text exists in code so it travels with the record if the adapter is ever run.
+
 ### Corrected defects worth carrying forward
 
 The first version of the KAN suite trained every model at one shared learning rate. The
@@ -207,6 +236,12 @@ deliberately (seeded initialization) or report a single run honestly. Details in
   architectures at this budget; it needs more data or a larger memory to be informative.
 - The xLSTM sLSTM variant is not width-matched to the mLSTM variant (8578 vs 4614
   parameters). The LSTM comparison resolves the confound for state tracking only.
+
+A fourth defect, caught in Track 07 before any number was published: the cost measurement
+timed `fit_prior_cached`, which by that point in the suite was a warm cache. It reported the
+PFN's up-front training cost as four microseconds — that is, as free — which is precisely
+the claim the measurement existed to test. **A timing that runs after the thing it times may
+already have happened.** Cost measurements must call the uncached path explicitly.
 
 ### Known environment issue
 

@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "track": "pfn",
+  "measurement": "prior_transfer_matrix",
+  "note": "Single seed. Rows where fit_prior != eval_prior are out-of-prior: the model is being asked about a task family it was never fitted to. The calibration column is the point \u2014 an out-of-prior model that stays confident is worse than one that becomes uncertain.",
+  "tabpfn_reference": {
+    "executed": false,
+    "reason": "TabPFN 8.2.0 gates its checkpoint behind interactive browser license acceptance, which cannot be completed non-interactively. No TabPFN number appears in this track.",
+    "adapter": "modern_nn_lab.tracks.pfn.reference",
+    "package_importable": false,
+    "pretraining_advantage_note": "TabPFN is a pre-trained checkpoint. It arrives having been fitted to a large synthetic prior at a compute cost that is not incurred by, or accounted for in, any baseline it is compared against here. A from-scratch model fitted on a few hundred rows is not its peer on equal terms, and any table containing both must state this. Neither the pre-training data nor its compute is measured by this repository."
+  },
+  "transfer": [
+    {
+      "fit_prior": "linear",
+      "eval_prior": "linear",
+      "in_prior": true,
+      "accuracy": 0.8610000014305115,
+      "expected_calibration_error": 0.02796792797744274,
+      "final_prior_fitting_loss": 0.2535701394081116
+    },
+    {
+      "fit_prior": "linear",
+      "eval_prior": "mlp",
+      "in_prior": false,
+      "accuracy": 0.800000011920929,
+      "expected_calibration_error": 0.08847332000732422,
+      "final_prior_fitting_loss": 0.2535701394081116
+    },
+    {
+      "fit_prior": "linear",
+      "eval_prior": "xor",
+      "in_prior": false,
+      "accuracy": 0.6294999718666077,
+      "expected_calibration_error": 0.20670661330223083,
+      "final_prior_fitting_loss": 0.2535701394081116
+    },
+    {
+      "fit_prior": "mlp",
+      "eval_prior": "linear",
+      "in_prior": false,
+      "accuracy": 0.7864999771118164,
+      "expected_calibration_error": 0.05824655294418335,
+      "final_prior_fitting_loss": 0.4097260534763336
+    },
+    {
+      "fit_prior": "mlp",
+      "eval_prior": "mlp",
+      "in_prior": true,
+      "accuracy": 0.8205000162124634,
+      "expected_calibration_error": 0.021144645288586617,
+      "final_prior_fitting_loss": 0.4097260534763336
+    },
+    {
+      "fit_prior": "mlp",
+      "eval_prior": "xor",
+      "in_prior": false,
+      "accuracy": 0.429500013589859,
+      "expected_calibration_error": 0.3294844627380371,
+      "final_prior_fitting_loss": 0.4097260534763336
+    }
+  ],
+  "cost": {
+    "note": "Single seed, CPU, on a shared machine \u2014 these are order-of-magnitude figures, not benchmarks. The PFN's prior fitting is a one-time cost paid before any of these datasets existed; each baseline's cost recurs per dataset.",
+    "prior_fitting_s": 10.646586399991065,
+    "prior_fitting_steps": 600,
+    "tasks_timed": 50,
+    "per_task_ms": {
+      "pfn": 0.20203800406306982,
+      "logistic": 2.7811639988794923,
+      "random_forest": 78.58475000131875,
+      "gradient_boosting": 52.93841400183737,
+      "mlp": 134.6799620008096
+    },
+    "break_even_tasks": {
+      "logistic": 4127.982278255805,
+      "random_forest": 135.82824743757044,
+      "gradient_boosting": 201.8831631593418,
+      "mlp": 79.16977064762422
+    }
+  }
+}

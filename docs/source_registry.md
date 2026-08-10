@@ -161,6 +161,34 @@ two-level composition is asserted equal to `torch.optim.SGD(momentum=0.9)` step 
 which is the falsifiable content of the source's claim that momentum is a second
 optimization level.
 
+### Track 07 — Prior-Fitted Networks
+
+| Field | Value |
+|---|---|
+| Primary source | **Not retrieved.** No paper was fetched or read in this environment for this track |
+| Formulation used | The PFN protocol as described in the track prompt: a predictor trained over tasks sampled from a synthetic prior, conditioning on a labelled context at inference with no per-dataset gradient step |
+| Official package | `tabpfn` — installed once to establish the nature of the blocker, then uninstalled. **Never executed** |
+| Reference comparison | **None run.** See below |
+| Datasets | Synthetic task priors generated in-repo (`linear`, `imbalanced`, `mlp`, `xor`). No external data |
+| Claim level | `educational implementation` |
+
+**Why deliverable B is absent.** TabPFN 8.2.0 gates its checkpoint download behind an
+interactive browser license acceptance (`ensure_license_accepted` → `try_browser_login`),
+which cannot complete non-interactively. Circumventing a license gate was not an option.
+The adapter in `modern_nn_lab.tracks.pfn.reference` is written and documented but **not
+executed**, the `tabpfn` extra is optional, and **no TabPFN number appears anywhere in this
+track**. The track's acceptance criterion — never compare the pre-trained checkpoint with a
+from-scratch neural baseline without discussing pre-training compute and data advantages —
+is therefore satisfied vacuously; `pretraining_advantage_note()` holds the text that must
+accompany any such table if the adapter is ever run.
+
+**What this means for the claim level.** Because no primary source was read, no equation
+here is checked against a paper, and nothing in this track may be cited as evidence about
+TabPFN. What *is* verified is structural: that queries cannot attend to one another, that
+predictions are invariant to context order, and that prediction moves no parameter — the
+three properties that make in-context prediction well posed, each asserted in
+`tests/test_pfn.py`.
+
 ## Source verification checklist
 
 For every track, record:

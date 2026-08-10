@@ -85,7 +85,8 @@ TRACKS: tuple[TrackSpec, ...] = (
         "Prior-Fitted Networks / TabPFN",
         "tabular",
         "Must each dataset require conventional fitting?",
-        "reference integration",
+        "educational implementation",
+        "complete",
     ),
     TrackSpec(
         "relational",
