@@ -1,0 +1,33 @@
+version: 2
+updates:
+  - package-ecosystem: pip
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "build"
+      include: scope
+    labels: ["dependencies"]
+    groups:
+      dev-tooling:
+        patterns:
+          - "ruff"
+          - "mypy"
+          - "pytest*"
+          - "pre-commit"
+          - "hypothesis"
+    ignore:
+      # Torch upgrades change numerics and wheel availability; bump deliberately.
+      - dependency-name: "torch"
+        update-types: ["version-update:semver-major"]
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+    commit-message:
+      prefix: "ci"
+    labels: ["dependencies", "ci"]

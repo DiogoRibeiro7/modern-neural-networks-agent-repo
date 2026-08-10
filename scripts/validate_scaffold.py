@@ -2,11 +2,15 @@
 
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 
-from modern_nn_lab.registry import TRACKS
-
 ROOT = Path(__file__).resolve().parents[1]
+
+# Allow running from a plain checkout, without an editable install.
+sys.path.insert(0, str(ROOT / "src"))
+
+from modern_nn_lab.registry import TRACKS  # noqa: E402  (path bootstrap must run first)
 
 PROMPT_BY_KEY = {
     "kan": "01_kan.md",

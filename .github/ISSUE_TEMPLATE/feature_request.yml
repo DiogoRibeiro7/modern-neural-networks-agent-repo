@@ -1,0 +1,51 @@
+name: Feature or track proposal
+description: Propose a new mechanism, baseline, diagnostic, or piece of shared infrastructure.
+title: "feat: <short description>"
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation
+      description: Which scientific question would this let the repository answer?
+    validations:
+      required: true
+
+  - type: textarea
+    id: sources
+    attributes:
+      label: Primary sources
+      description: |
+        Paper title, authors, arXiv identifier and version, official repository URL, and
+        license. Blog posts and summaries are not sufficient.
+    validations:
+      required: true
+
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Diagnostic that isolates the mechanism
+      description: Which synthetic task would show the mechanism working, and how would an ablation neutralize it?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: claim
+    attributes:
+      label: Realistic claim level
+      description: See `docs/claim_policy.md`.
+      options:
+        - educational implementation
+        - compact reproduction
+        - reference integration
+        - research prototype
+    validations:
+      required: true
+
+  - type: textarea
+    id: cost
+    attributes:
+      label: Expected compute cost
+      description: Can the diagnostic run on CPU in minutes? If not, say what hardware it needs.
+    validations:
+      required: true
