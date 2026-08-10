@@ -14,7 +14,7 @@ pipeline with a Python 3.11-3.13 test matrix. No architecture track status chang
 |---|---:|---:|---:|---:|---:|---|
 | KAN | 100% | 100% | 100% | 100% | 100% | complete |
 | xLSTM | 100% | 100% | 100% | 100% | 100% | complete |
-| Mamba-3 | 0% | 0% | 0% | 0% | 0% | queued |
+| Mamba-3 | 100% | 100% | 100% | 100% | 100% | complete |
 | TTT | 0% | 0% | 0% | 0% | 0% | queued |
 | Titans | 0% | 0% | 0% | 0% | 0% | queued |
 | Nested Learning / Hope | 0% | 0% | 0% | 0% | 0% | queued |
@@ -24,14 +24,16 @@ pipeline with a Python 3.11-3.13 test matrix. No architecture track status chang
 | Flow Matching | 0% | 0% | 0% | 0% | 0% | queued |
 | JEPA | 0% | 0% | 0% | 0% | 0% | queued |
 
-Milestone **M0 (repository contracts)** is complete. Tracks 01 (KAN) and 02 (xLSTM) are
-complete end to end and establish the conventions every later track follows.
+Milestone **M0 (repository contracts)** is complete. Tracks 01 (KAN), 02 (xLSTM), and
+03 (Mamba-3) are complete end to end and establish the conventions every later track
+follows. Tracks 02 and 03 share task generation, so their records are directly comparable.
 
 ## Next atomic milestone
 
-Track 03 (Mamba-3 / modern SSMs): verify the primary source, implement a transparent
-selective state-space recurrence, and reuse the shared sequence tasks from Track 02 so the
-comparison against xLSTM, LSTM, GRU, and the Transformer is on identical data.
+Track 04 (Test-Time Training): implement TTT-Linear, whose hidden state is itself a
+learner updated by a self-supervised objective during the forward pass. Reuse the shared
+sequence tasks so the results join the Track 02 and 03 comparison, and make the required
+ablation — the identical architecture with the inner update frozen — the primary result.
 
 ## Last verification
 
@@ -64,6 +66,23 @@ comparison against xLSTM, LSTM, GRU, and the Transformer is on identical data.
 - 108 records committed under `results/xlstm/`, all `status="success"`.
 - Ran the full gate: ruff, ruff format, mypy, pytest, both validators, report generator.
 
+**Track 03 — Mamba-3** (claim level: `educational implementation`)
+
+- First track whose primary source was retrieved and read in-environment: the recurrence,
+  discretization coefficients, and both rotation formulations are transcribed from
+  Propositions 1-4 and equations (1)-(14), not reconstructed.
+- Added `tracks/mamba3/` (`ssm`, `model`, `config`, `README`), the experiment suite, and
+  the report generator. Promoted the shared sequence scaffolding to
+  `modern_nn_lab/models/sequence.py` so no track imports another track.
+- 22 invariant tests, including four equality assertions against the source's own
+  formulas: Table 1's exponential-Euler row, Proposition 1's coefficients, the
+  Proposition 2 vs Proposition 3 identity (block rotation vs the RoPE trick), and the
+  MIMO decomposition of equations (12)-(14).
+- 105 records committed under `results/mamba3/`, all `status="success"`.
+- **Pre-registered prediction confirmed**: removing rotation collapses parity accuracy
+  from 0.847 to 0.578 with disjoint intervals, and resolves the mLSTM parity failure that
+  Track 02 left open (0.589 on identical data).
+
 ### Corrected defects worth carrying forward
 
 The first version of the KAN suite trained every model at one shared learning rate. The
@@ -87,9 +106,15 @@ track that stabilizes a recurrence must carry the same kind of test. Details in
   justification.
 - Adaptive grid updates are implemented and tested but excluded from the reported KAN
   training loop; they are listed as deviation 4 and as a next experiment.
-- Nine architecture tracks remain queued (Mamba-3, TTT, Titans, Nested Learning/Hope,
+- Eight architecture tracks remain queued (TTT, Titans, Nested Learning/Hope,
   PFN/TabPFN, Relational FM, Sparse MoE, Flow Matching, JEPA) plus the final integration
   prompt.
+- Mamba-3's MIMO contribution **cannot be evaluated by this repository**: its benefit is
+  decode-time arithmetic intensity on an accelerator, and a Python scan on CPU has no
+  memory-bound decode to improve. Recorded as an untestable claim, not a negative result.
+- Mamba-3 ablations are not parameter-matched to the full model (5-25 % gaps), because
+  each removes the parameters belonging to its mechanism. The parity conclusion is
+  protected by the LSTM comparison; other comparisons are weaker.
 - The xLSTM selective-recall diagnostic did not discriminate between any two
   architectures at this budget; it needs more data or a larger memory to be informative.
 - The xLSTM sLSTM variant is not width-matched to the mLSTM variant (8578 vs 4614

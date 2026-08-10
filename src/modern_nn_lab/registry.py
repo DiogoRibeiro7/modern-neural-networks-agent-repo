@@ -53,7 +53,8 @@ TRACKS: tuple[TrackSpec, ...] = (
         "Mamba-3 / SSMs",
         "sequence",
         "Do sequence models need attention?",
-        "compact reproduction",
+        "educational implementation",
+        "complete",
     ),
     TrackSpec(
         "ttt",

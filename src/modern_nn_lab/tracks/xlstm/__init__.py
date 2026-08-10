@@ -6,6 +6,13 @@ carrying an explicit normalizer state so the unbounded gate stays usable. See
 mapping, and the deviations from the primary source.
 """
 
+from modern_nn_lab.models.sequence import (
+    CausalTransformer,
+    RecurrentBaseline,
+    TokenSequenceModel,
+    count_parameters,
+    match_width_to_budget,
+)
 from modern_nn_lab.tracks.xlstm.cells import (
     GateKind,
     MLSTMCell,
@@ -14,14 +21,7 @@ from modern_nn_lab.tracks.xlstm.cells import (
     SLSTMState,
 )
 from modern_nn_lab.tracks.xlstm.config import XLSTMConfig, XLSTMExperimentConfig
-from modern_nn_lab.tracks.xlstm.model import (
-    XLSTM,
-    CausalTransformer,
-    RecurrentBaseline,
-    TokenSequenceModel,
-    count_parameters,
-    match_width_to_budget,
-)
+from modern_nn_lab.tracks.xlstm.model import XLSTM
 
 __all__ = [
     "XLSTM",

@@ -27,6 +27,13 @@ experimental results, as defined in [`docs/claim_policy.md`](docs/claim_policy.m
   and causal-Transformer baselines matched by width to the xLSTM parameter budget; the
   gating ablation; shared copy / selective-recall / state-tracking diagnostics; a
   context-scaling study; 41 invariant tests; 108 committed records; and `reports/xlstm.md`.
+- **Track 03 — Mamba-3** (claim level: `educational implementation`): exponential-trapezoidal
+  discretization, complex-valued dynamics as data-dependent rotary embeddings, and a MIMO
+  state update, each removable by a flag that recovers the prior method exactly; LSTM, GRU,
+  and Transformer baselines matched by width; 22 invariant tests including four equality
+  assertions against the source's own equations; 105 committed records; `reports/mamba3.md`.
+- `modern_nn_lab.models.sequence`: shared token-sequence scaffolding and baselines,
+  promoted out of the xLSTM track once a second track needed them.
 - A `Split` protocol so one experiment runner serves tabular and sequence splits alike.
 - `modern-nn run-track`, per-track experiment suites, non-Torch baseline records
   (`experiments/external.py`), and marker-based report generation
