@@ -45,6 +45,11 @@ def get_track_suite(key: str) -> RunTrack:
 
         return mamba3.run
 
+    if key == "ttt":
+        from modern_nn_lab.experiments.tracks import ttt
+
+        return ttt.run
+
     raise KeyError(f"track {key!r} has no runnable experiment suite yet")
 
 

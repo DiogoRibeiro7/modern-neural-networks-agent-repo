@@ -61,7 +61,8 @@ TRACKS: tuple[TrackSpec, ...] = (
         "Test-Time Training",
         "sequence",
         "Can the hidden state itself learn at inference?",
-        "compact reproduction",
+        "educational implementation",
+        "complete",
     ),
     TrackSpec(
         "titans",

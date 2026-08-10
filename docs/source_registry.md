@@ -7,7 +7,7 @@ This file is a starting point, not permission to skip source verification. The c
 | KAN | Liu et al., *KAN: Kolmogorov-Arnold Networks*, arXiv:2404.19756 |
 | xLSTM | Beck et al., *xLSTM: Extended Long Short-Term Memory*, arXiv:2405.04517 |
 | Mamba-3 | Lahoti et al., *Mamba-3: Improved Sequence Modeling using State Space Principles*, arXiv:2603.15569v1 (ICLR 2026) — **verified** |
-| TTT | Sun et al., *Learning to (Learn at Test Time): RNNs with Expressive Hidden States*, arXiv:2407.04620 |
+| TTT | Sun et al., *Learning to (Learn at Test Time): RNNs with Expressive Hidden States*, arXiv:2407.04620 — **verified** |
 | Titans | Behrouz et al., *Titans: Learning to Memorize at Test Time*, arXiv:2501.00663 |
 | Nested Learning / Hope | Behrouz et al., *Nested Learning: The Illusion of Deep Learning Architectures*, arXiv:2512.24695 |
 | PFN / TabPFN | Use the current TabPFN primary paper/model report and official package; also implement the PFN concept independently on synthetic tasks |
@@ -85,6 +85,30 @@ architecture of Section 3.4, and every experimental result in the paper. Section
 onwards were not read. The systems claims — arithmetic intensity, decode latency, kernel
 benchmarks — are **untestable in this implementation** and no attempt is made to evaluate
 them.
+
+### Track 04 — Test-Time Training
+
+| Field | Value |
+|---|---|
+| Primary source | Sun, Li, Dalal, Xu, Vikram, Zhang, Dubois, Chen, Wang, Koyejo, Hashimoto, Guestrin, *Learning to (Learn at Test Time): RNNs with Expressive Hidden States*, arXiv:2407.04620 |
+| Retrieved | The PDF was fetched and read inside this environment. Sections 2.1-2.7 and Theorems 1-2 were read directly; the equations in the track README are transcribed from equations (4)-(6) and Subsection 2.7, not reconstructed from a summary. |
+| Formulation used | Online gradient descent on the multi-view reconstruction loss (eq. 4), output rule (eq. 5), `f(x) = x + LN(f_res(x))`, learnable `W_0` and learnable token-dependent inner learning rate (Subsection 2.7) |
+| Official repository | Referenced by the paper (JAX/EasyLM); **not vendored and not invoked**. No reference-integration claim is made. |
+| Reference comparison | **None run.** No number in `reports/ttt.md` is compared against the paper's. |
+| Datasets | A new in-repo rebinding task plus the selective-recall task shared with Tracks 02 and 03. No external data. |
+| Deviations | Five, enumerated in [`src/modern_nn_lab/tracks/ttt/README.md`](../src/modern_nn_lab/tracks/ttt/README.md#known-approximations-and-deviations-from-the-primary-source) |
+| Claim level | `educational implementation` |
+
+**What was verified and what was not.** The inner update is checked against a hand-derived
+gradient, the inner learning rate against the source's formula, and the batch-gradient-descent
+instantiation against the source's Theorem 1 (it must equal causal linear attention exactly).
+
+Not verified: Appendix A (the dual form for nonlinear `f`), Appendix B, the released
+kernels, and every experimental result in the paper. Sections 3 onwards were not read
+beyond the protocol description. **Deviation 1 matters for interpretation**: the source's
+own ablation reports that moving from batch GD to mini-batch GD with `b = 16` is its single
+largest quality improvement, and this implementation uses `b = 1` (pure online GD), so it
+should be expected to underperform the paper's configuration on quality, not only on speed.
 
 ## Source verification checklist
 
