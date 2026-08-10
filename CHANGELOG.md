@@ -10,6 +10,16 @@ experimental results, as defined in [`docs/claim_policy.md`](docs/claim_policy.m
 
 ## [Unreleased]
 
+### Added
+
+- Zenodo concept DOI `10.5281/zenodo.21879430` in `CITATION.cff` (as both `doi` and a
+  described `identifiers` entry) and as a README badge. The README now distinguishes the
+  concept DOI, for citing the software in general, from a version DOI, which is what a
+  reproducibility claim should name.
+- A note in the README's citation section stating what citing this repository does not
+  assert: no track claims to reproduce a published number, and citing the software is not
+  a citation of the papers it implements.
+
 ## [0.2.1] - 2026-08-10
 
 **No code or result changes.** This release exists so that the repository's first archived

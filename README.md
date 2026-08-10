@@ -6,6 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Code style: Ruff](https://img.shields.io/badge/code%20style-ruff-261230)](https://docs.astral.sh/ruff/)
 [![Checked with mypy](https://img.shields.io/badge/mypy-strict-2a6db2)](https://mypy-lang.org/)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21879430.svg)](https://doi.org/10.5281/zenodo.21879430)
 
 A research-oriented, reproducible implementation lab for modern neural-network architectures and learning paradigms beyond conventional MLPs and Transformers.
 
@@ -134,8 +135,24 @@ make check
 
 ## Citation
 
+Archived on Zenodo. To cite **all versions**, use the concept DOI, which always resolves
+to the latest release:
+
+> [10.5281/zenodo.21879430](https://doi.org/10.5281/zenodo.21879430)
+
+To cite the exact version you ran, use that release's own DOI from its
+[Zenodo record](https://doi.org/10.5281/zenodo.21879430) — reproducibility claims should name a version,
+not the concept.
+
 Citation metadata lives in [`CITATION.cff`](CITATION.cff) and [`.zenodo.json`](.zenodo.json).
 GitHub renders a ready-made citation from the former under **Cite this repository**.
+
+**What a citation of this repository does and does not assert.** Every result carries a
+claim level from [`docs/claim_policy.md`](docs/claim_policy.md), and no track claims to
+reproduce a published number. Citing this software is not a citation of the papers it
+implements; those are listed per track in
+[`docs/source_registry.md`](docs/source_registry.md), which also records the two tracks
+whose primary sources were never retrieved.
 
 ## License
 
