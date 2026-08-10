@@ -8,7 +8,7 @@ This file is a starting point, not permission to skip source verification. The c
 | xLSTM | Beck et al., *xLSTM: Extended Long Short-Term Memory*, arXiv:2405.04517 |
 | Mamba-3 | Lahoti et al., *Mamba-3: Improved Sequence Modeling using State Space Principles*, arXiv:2603.15569v1 (ICLR 2026) — **verified** |
 | TTT | Sun et al., *Learning to (Learn at Test Time): RNNs with Expressive Hidden States*, arXiv:2407.04620 — **verified** |
-| Titans | Behrouz et al., *Titans: Learning to Memorize at Test Time*, arXiv:2501.00663 |
+| Titans | Behrouz et al., *Titans: Learning to Memorize at Test Time*, arXiv:2501.00663 — **verified** |
 | Nested Learning / Hope | Behrouz et al., *Nested Learning: The Illusion of Deep Learning Architectures*, arXiv:2512.24695 |
 | PFN / TabPFN | Use the current TabPFN primary paper/model report and official package; also implement the PFN concept independently on synthetic tasks |
 | Relational FM | Hudovernik et al., *KumoRFM-2: Scaling Foundation Models for Relational Learning*, arXiv:2604.12596 |
@@ -109,6 +109,32 @@ beyond the protocol description. **Deviation 1 matters for interpretation**: the
 own ablation reports that moving from batch GD to mini-batch GD with `b = 16` is its single
 largest quality improvement, and this implementation uses `b = 1` (pure online GD), so it
 should be expected to underperform the paper's configuration on quality, not only on speed.
+
+### Track 05 — Titans
+
+| Field | Value |
+|---|---|
+| Primary source | Behrouz, Zhong, Mirrokni, *Titans: Learning to Memorize at Test Time*, arXiv:2501.00663 |
+| Retrieved | The PDF was fetched and read inside this environment. Sections 3.1-3.3 and 4.1-4.3 were read directly; equations 8, 11-15, 19 and 26-31 are transcribed, not reconstructed. |
+| Variant implemented | **Memory as a Gate (MAG)**, Section 4.2, equations 26-28. MAC (4.1) and MAL (4.3) are not implemented; the choice and its cost are argued in the track README. |
+| Official repository | Not vendored and not invoked. No reference-integration claim is made. |
+| Reference comparison | **None run.** No number in `reports/titans.md` is compared against the paper's. |
+| Datasets | A new in-repo needle task with controlled write-to-query distance. No external data. |
+| Deviations | Five, enumerated in [`src/modern_nn_lab/tracks/titans/README.md`](../src/modern_nn_lab/tracks/titans/README.md#known-approximations-and-deviations-from-the-primary-source) |
+| Claim level | `educational implementation` |
+
+**What was verified and what was not.** Each term of the update rule is checked in
+isolation against the source's equations: the associative loss, the first write, momentum
+accumulation, the reduction to equation 8 when momentum is disabled, the forgetting gate
+at `alpha = 1`, and purely additive writes when forgetting is disabled.
+
+Not verified: the chunked parallel formulation of Section 3.2, the appendices, and every
+experimental result in the paper. **Deviation 1 is material and was forced by measurement,
+not preference**: the update rule as literally written diverges to `NaN` within five
+tokens at this scale, because `theta_t` has no specified numeric range. Bounding it,
+normalizing keys, and averaging the loss over features makes it stable. A reader should
+treat the resulting dynamics as *a* stable instantiation of the source's rule, not as the
+authors' configuration.
 
 ## Source verification checklist
 
