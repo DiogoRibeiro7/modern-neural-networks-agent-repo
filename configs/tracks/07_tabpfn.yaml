@@ -1,10 +1,50 @@
 track: 07_tabpfn
-model: pfn_toy
-task: tabular_classification
+model: prior_fitted_network
+task: in_context_tabular_classification
+claim_level: educational implementation
+
+# Deliverable A (from-scratch PFN) is implemented and executed. Deliverable B (the
+# official TabPFN checkpoint) is NOT executed: TabPFN 8.x gates its checkpoint behind
+# interactive browser license acceptance. The adapter exists; no TabPFN number is
+# reported anywhere in this track.
+implements: [prior-fitting, in-context-prediction, prior-sensitivity, small-n-regime]
+not_implemented: [official-tabpfn-checkpoint, regression-head, categorical-features]
+
 seed: 1729
-batch_size: 64
-epochs: 50
-learning_rate: 0.001
-parameter_budget: null
+seeds: [0, 1, 2, 3, 4]
+
+# Architecture. Deliberately small: the point is the mechanism, not the scale.
+n_features: 4
+n_classes: 2
+d_model: 64
+n_layers: 3
+n_heads: 4
+feedforward: 2               # multiple of d_model
+positional_encoding: none    # a dataset is a set; order must not matter
+
+# Prior fitting — the only training in this track. Nothing is fitted per dataset.
+prior_fitting_steps: 600
+tasks_per_step: 16
+learning_rate: 0.0003
+train_context: 20
+n_query: 20
+
+# Evaluation. Every model sees the same context and the same queries.
+eval_tasks: 100
+context_sweep: [5, 10, 20, 40]
+label_noise: 0.1
+fit_prior: linear
+eval_priors: [linear, mlp, xor]   # linear is in-prior; mlp and xor are not
+
+baselines: [logistic, random_forest, gradient_boosting, mlp]
+
+parameter_budget: null    # not matched, and deliberately so — see notes
 compute_budget: null
-notes: "Scaffold configuration; tune only after the baseline is established."
+notes: >-
+  Parameter counts are not matched and could not meaningfully be: a prior-fitted
+  transformer and a per-task logistic regression do not have comparable notions of
+  capacity. What is matched is the evidence each model gets — the same context rows and
+  the same queries — which is the comparison the track is actually making. The PFN pays
+  its training cost once, up front, on synthetic tasks from a known prior; the baselines
+  pay theirs per task. That asymmetry is the mechanism under study, not a confound, and
+  the out-of-prior evaluations (mlp, xor) are where it is expected to fail.

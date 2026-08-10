@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "track": "pfn",
+  "architecture": "random_forest",
+  "architecture_version": "0.1.0",
+  "variant": "fitted-per-task",
+  "git_commit": "841f9b0dde7b40b57fe5070b8f1a6098b05985f4",
+  "dataset": "fit-linear__eval-linear__ctx40__d4",
+  "dataset_fingerprint": "28a8c5aaa2461815",
+  "split_strategy": "100 tasks sampled from the linear prior; the PFN was prior-fitted on linear; baselines are fitted per task on the same 40-example context and scored on the same queries",
+  "train_samples": null,
+  "eval_samples": null,
+  "seed": 3,
+  "optimizer": "none",
+  "scheduler": null,
+  "learning_rate": null,
+  "batch_size": null,
+  "epochs": null,
+  "steps": null,
+  "effective_samples": null,
+  "parameter_count": 0,
+  "activated_parameter_count": null,
+  "flops_per_sample": null,
+  "train_wall_clock_s": 7.6223204000853,
+  "inference_latency_ms": null,
+  "inference_throughput_per_s": null,
+  "peak_memory_bytes": null,
+  "primary_metric": {
+    "name": "query_accuracy",
+    "value": 0.8755000233650208,
+    "higher_is_better": true
+  },
+  "secondary_metrics": {
+    "expected_calibration_error": 0.059390027076005936
+  },
+  "train_loss_trajectory": [],
+  "eval_metric_trajectory": [],
+  "hardware": {
+    "device": "cpu",
+    "device_name": "Intel64 Family 6 Model 170 Stepping 4, GenuineIntel",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python_version": "3.13.5",
+    "torch_version": "2.11.0+cpu",
+    "cpu_count": 22
+  },
+  "precision": "float32",
+  "config": {
+    "fit_prior": "linear",
+    "eval_prior": "linear",
+    "n_context": 40,
+    "label_noise": 0.0,
+    "missing_rate": 0.0,
+    "n_features": 4,
+    "eval_tasks": 100,
+    "in_prior": true
+  },
+  "status": "success",
+  "notes": "Fitted from scratch on each task's context, the usual way."
+}
