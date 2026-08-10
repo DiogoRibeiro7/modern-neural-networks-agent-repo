@@ -1,10 +1,55 @@
 track: 09_sparse_moe
-model: sparse_moe
-task: conditional_computation
+model: sparse_mixture_of_experts
+task: mixture_of_functions_regression
+claim_level: educational implementation
+
+implements: [dense-expert-reference, top-k-router, dispatch-combine, capacity-handling,
+             load-balancing-loss, routing-diagnostics]
+not_implemented: [expert-parallelism, fused-dispatch-kernel, hierarchical-routing,
+                  expert-choice-routing]
+
 seed: 1729
-batch_size: 128
-epochs: 100
-learning_rate: 0.001
-parameter_budget: null
+seeds: [0, 1, 2, 3, 4]
+data_seed: 1729          # one dataset, shared by every model and every seed
+
+# Task. The selector half decides which function applies; the value half is what it acts
+# on. They are independent, so a model that ignores routing cannot succeed by regression.
+n_sequences: 1200
+seq_len: 16
+n_functions: 4
+d_selector: 4
+d_value: 4
+
+# Architecture.
+d_model: 32
+d_hidden: 32             # per expert
+n_experts: 4
+dense_hidden: 128        # dense-ffn widened to match the expert bank's parameter count
+
+# Routing.
+top_k_grid: [1, 2]
+capacity_factor: 1.25
+capacity_grid: [1.25, 0.5]    # 0.5 is below the even share and forces overflow
+aux_weight_grid: [0.01, 0.0]  # 0.0 is the ablation
+renormalize: true             # BUT see notes: false is required for top-1
+
+# Training.
+epochs: 60
+batch_size: 32
+learning_rate_grid: [0.003, 0.01]   # selected per architecture on validation
+
+baselines: [dense-ffn, dense-moe]
+ablations: [sparse-top1-raw, sparse-capacity0.5, sparse-aux0]
+
+parameter_budget: matched     # every mixture layer holds the same expert bank
 compute_budget: null
-notes: "Scaffold configuration; tune only after the baseline is established."
+notes: >-
+  Total and activated parameters are different numbers for a sparse layer, and every
+  record carries both plus an analytic FLOP estimate and a measured throughput; quoting
+  only one of them would not be a comparison. Throughput is measured on CPU and varies by
+  more than 3x between architecturally identical variants, so only its order of magnitude
+  is meaningful. RENORMALIZATION WARNING: with top_k=1 the renormalized gate is g/g = 1,
+  a constant, so the task loss contributes exactly zero gradient to the router and the
+  auxiliary loss alone shapes routing - towards uniform, which is the opposite of
+  specialization. The sparse-top1-raw variant sets renormalize=false and is the correct
+  configuration for top-1 routing.

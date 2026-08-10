@@ -102,6 +102,7 @@ TRACKS: tuple[TrackSpec, ...] = (
         "general",
         "Can conditional computation scale capacity efficiently?",
         "educational implementation",
+        "complete",
     ),
     TrackSpec(
         "flow",

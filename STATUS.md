@@ -25,12 +25,12 @@ repository's claim boundaries.
 | Nested Learning / Hope | 100% | partial | 100% | 100% | 100% | complete (prototype) |
 | PFN / TabPFN | 100% | 100% | 100% | 100% | 100% | complete (deliverable A) |
 | Relational FM | 100% | 100% | 100% | 100% | 100% | complete (prototype) |
-| Sparse MoE | 0% | 0% | 0% | 0% | 0% | queued |
+| Sparse MoE | 100% | 100% | 100% | 100% | 100% | complete |
 | Flow Matching | 0% | 0% | 0% | 0% | 0% | queued |
 | JEPA | 0% | 0% | 0% | 0% | 0% | queued |
 
 Milestone **M0 (repository contracts)** is complete. Tracks 01 (KAN), 02 (xLSTM),
-03 (Mamba-3), 04 (TTT), 05 (Titans), 06 (Nested Learning), 07 (PFN), and 08 (Relational) are complete end to end and establish the conventions every later track
+03 (Mamba-3), 04 (TTT), 05 (Titans), 06 (Nested Learning), 07 (PFN), 08 (Relational), and 09 (Sparse MoE) are complete end to end and establish the conventions every later track
 follows. Tracks 02 and 03 share task generation, so their records are directly comparable.
 
 Track 07 is complete for **deliverable A only**. Deliverable B — a benchmark of the
@@ -40,10 +40,10 @@ no TabPFN number appears anywhere in the repository.
 
 ## Next atomic milestone
 
-Track 09 (Sparse Mixture of Experts). The prompt's subject is routing, so the reporting
-contract matters more than usual: activated parameters and total parameters are different
-numbers, and a comparison that uses the wrong one is not a comparison. The record schema
-already carries `activated_parameter_count` for exactly this.
+Track 10 (Flow Matching). The prompt asks for a 2D density-recovery diagnostic, so the
+evaluation question is the hard part: sample quality on a known density needs a distance
+that is not the training objective, or the report measures how well the model minimized
+its own loss.
 
 ## Last verification
 
@@ -194,6 +194,27 @@ already carries `activated_parameter_count` for exactly this.
   modelling against flattening. Recorded as the track's largest design limitation and as
   its first next experiment.
 
+**Track 09 — Sparse Mixture of Experts** (claim level: `educational implementation`)
+
+- Added `tracks/moe/` (`router`, `layer`, `data`, `model`, `README`), the experiment suite,
+  and the report generator. 35 records plus a routing-diagnostics artefact.
+- Every record carries **total and activated parameters**, an analytic FLOP estimate, and a
+  measured throughput. Quoting one without the others is not a comparison.
+- 34 tests. The load-balancing loss is checked against both exact endpoints — `1` under
+  uniform routing, `E` under collapse — on distributions constructed directly rather than
+  trained for, so the tests exercise the formula and not the optimizer.
+- **A defect in this repository's own router, found by the required diagnostics.**
+  Renormalizing kept gates under `top_k=1` yields `g/g = 1`, constant in the router's
+  parameters, so the task loss contributes exactly zero gradient to routing (measured at
+  ~1e-9 against ~3.5e-2 without it). The auxiliary loss was then the only signal, and it
+  pushes towards uniform — the opposite of specialization. Fixing it cut error 39% at
+  identical parameters and FLOPs. **On accuracy alone the conclusion would have been
+  "top-1 sparsity hurts quality", which is wrong**; the entropy column named the cause.
+- **Uniform utilization can be a symptom, not a sign of health.** The tightest-capacity
+  variant shows perfectly balanced utilization while being the worst model in the table —
+  the balance is the capacity ceiling binding, not good routing. Read alone, that column
+  would have misled.
+
 ### Corrected defects worth carrying forward
 
 The first version of the KAN suite trained every model at one shared learning rate. The
@@ -238,8 +259,8 @@ deliberately (seeded initialization) or report a single run honestly. Details in
   justification.
 - Adaptive grid updates are implemented and tested but excluded from the reported KAN
   training loop; they are listed as deviation 4 and as a next experiment.
-- Three architecture tracks remain queued (Sparse MoE, Flow Matching, JEPA) plus the final
-  integration prompt.
+- Two architecture tracks remain queued (Flow Matching, JEPA) plus the final integration
+  prompt.
 - The relational track's GBDT baseline uses joins written with knowledge of what each regime
   depends on. That makes it strong and fair for these five regimes, but it flatters the
   flattening approach relative to a setting where nobody knows in advance which aggregate

@@ -12,6 +12,18 @@ experimental results, as defined in [`docs/claim_policy.md`](docs/claim_policy.m
 
 ### Added
 
+- **Track 09 — Sparse Mixture of Experts** (claim level: `educational implementation`): a
+  top-k router with explicit capacity and dropping, a dense-ensemble reference, a dense
+  feed-forward baseline, and ablations for top-k, capacity, and the balancing loss; every
+  record carries total *and* activated parameters, an analytic FLOP estimate, and a measured
+  throughput; a mixture-of-functions task whose generating function is recorded, so expert
+  specialization is a confusion matrix rather than an inference; 34 tests including both
+  exact endpoints of the balancing loss; and `reports/moe.md`. The required routing
+  diagnostics exposed a real defect: renormalizing kept gates under top-1 severs the router
+  from the task loss entirely, and fixing it cut error 39% at identical cost.
+
+### Added
+
 - Zenodo concept DOI `10.5281/zenodo.21879430` in `CITATION.cff` (as both `doi` and a
   described `identifiers` entry) and as a README badge. The README now distinguishes the
   concept DOI, for citing the software in general, from a version DOI, which is what a

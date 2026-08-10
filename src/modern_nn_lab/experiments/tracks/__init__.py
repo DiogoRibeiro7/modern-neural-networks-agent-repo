@@ -58,6 +58,7 @@ def get_track_suite(key: str) -> RunTrack:
         "hope": lambda: _module("hope"),
         "pfn": lambda: _module("pfn"),
         "relational": lambda: _module("relational"),
+        "moe": lambda: _module("moe"),
     }
     if key in loaders:
         return loaders[key]()
