@@ -12,7 +12,8 @@
 
 ## Scientific checklist
 
-Delete the section if this PR contains no experimental result.
+Delete the section if this PR contains no experimental result. See `reports/kan.md` or
+`reports/xlstm.md` for a worked example of the expected structure.
 
 - [ ] Primary sources verified and recorded in `docs/source_registry.md`, including deviations.
 - [ ] Track specification (`src/modern_nn_lab/tracks/<track>/README.md`) is current.

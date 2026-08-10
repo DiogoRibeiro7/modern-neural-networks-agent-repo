@@ -43,6 +43,8 @@ CONFIG_BY_KEY = {
 
 REPORT_BY_KEY = {key: f"{key}.md" for key in PROMPT_BY_KEY}
 
+PROMPTS = ROOT / "prompts"
+
 
 def main() -> None:
     """Raise ``FileNotFoundError`` when required scaffold files are absent.
@@ -56,9 +58,12 @@ def main() -> None:
         package = ROOT / "src" / "modern_nn_lab" / "tracks" / track.key
         required = [
             package / "__init__.py",
-            ROOT / "prompts" / PROMPT_BY_KEY[track.key],
             ROOT / "configs" / "tracks" / CONFIG_BY_KEY[track.key],
         ]
+        # Track prompts are development inputs, not deliverables, and a checkout may
+        # legitimately omit them. Validate them only when the directory is present.
+        if PROMPTS.is_dir():
+            required.append(PROMPTS / PROMPT_BY_KEY[track.key])
         if track.status == "complete":
             required += [
                 package / "README.md",

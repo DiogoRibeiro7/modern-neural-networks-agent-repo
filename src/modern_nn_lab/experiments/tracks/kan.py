@@ -1,6 +1,6 @@
 r"""Experiment suite for Track 01 — Kolmogorov-Arnold Networks.
 
-Protocol, in the order required by ``prompts/00_master_agent_prompt.md``:
+Protocol, in the order the repository requires of every track:
 
 1. **Diagnostics that isolate the mechanism** — univariate functions with a known
    analytic form, then a multivariate compositional function.
