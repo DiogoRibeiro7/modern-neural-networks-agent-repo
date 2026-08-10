@@ -1,0 +1,246 @@
+{
+  "schema_version": 1,
+  "track": "moe",
+  "measurement": "routing_diagnostics",
+  "note": "Single seed per variant. `specialization_matrix` counts tokens by (true generating function, chosen expert): a router that recovered the mixture produces one dominant entry per row. `specialization_purity` summarizes that permutation-invariantly, and must be read beside the utilization spread \u2014 two functions sharing one expert still score well on purity alone.",
+  "n_functions": 4,
+  "n_experts": 4,
+  "chance_purity": 0.25,
+  "variants": [
+    {
+      "variant": "sparse-top1",
+      "top_k": 1,
+      "capacity_factor": 1.25,
+      "aux_loss_weight": 0.01,
+      "load_balancing_loss": 1.0019173622131348,
+      "routing_entropy": 1.384953498840332,
+      "routing_entropy_normalized": 0.9990327954292297,
+      "expert_utilization_max": 0.30763888359069824,
+      "expert_utilization_min": 0.18611110746860504,
+      "dropped_fraction": 0.0,
+      "capacity": 900,
+      "utilization": [
+        0.27916666865348816,
+        0.18611110746860504,
+        0.30763888359069824,
+        0.22708334028720856
+      ],
+      "specialization_matrix": [
+        [
+          282.0,
+          93.0,
+          226.0,
+          55.0
+        ],
+        [
+          78.0,
+          20.0,
+          416.0,
+          276.0
+        ],
+        [
+          219.0,
+          130.0,
+          203.0,
+          239.0
+        ],
+        [
+          225.0,
+          293.0,
+          41.0,
+          84.0
+        ]
+      ],
+      "specialization_purity": 0.4270833432674408,
+      "kept_fraction": 1.0
+    },
+    {
+      "variant": "sparse-top2",
+      "top_k": 2,
+      "capacity_factor": 1.25,
+      "aux_loss_weight": 0.01,
+      "load_balancing_loss": 1.0494319200515747,
+      "routing_entropy": 0.27658626437187195,
+      "routing_entropy_normalized": 0.19951482117176056,
+      "expert_utilization_max": 0.29722222685813904,
+      "expert_utilization_min": 0.17517361044883728,
+      "dropped_fraction": 0.0,
+      "capacity": 1800,
+      "utilization": [
+        0.29722222685813904,
+        0.17517361044883728,
+        0.2638888955116272,
+        0.2637152671813965
+      ],
+      "specialization_matrix": [
+        [
+          9.0,
+          12.0,
+          630.0,
+          5.0
+        ],
+        [
+          770.0,
+          11.0,
+          1.0,
+          8.0
+        ],
+        [
+          10.0,
+          3.0,
+          4.0,
+          774.0
+        ],
+        [
+          61.0,
+          342.0,
+          175.0,
+          65.0
+        ]
+      ],
+      "specialization_purity": 0.8736110925674438,
+      "kept_fraction": 1.0
+    },
+    {
+      "variant": "sparse-top1-raw",
+      "top_k": 1,
+      "capacity_factor": 1.25,
+      "aux_loss_weight": 0.01,
+      "load_balancing_loss": 1.139724612236023,
+      "routing_entropy": 0.6204010844230652,
+      "routing_entropy_normalized": 0.4475247859954834,
+      "expert_utilization_max": 0.34324944019317627,
+      "expert_utilization_min": 0.1632341742515564,
+      "dropped_fraction": 0.08958333333333335,
+      "capacity": 900,
+      "utilization": [
+        0.3012967109680176,
+        0.1632341742515564,
+        0.19221967458724976,
+        0.34324944019317627
+      ],
+      "specialization_matrix": [
+        [
+          197.0,
+          57.0,
+          336.0,
+          66.0
+        ],
+        [
+          230.0,
+          128.0,
+          65.0,
+          367.0
+        ],
+        [
+          31.0,
+          30.0,
+          16.0,
+          714.0
+        ],
+        [
+          332.0,
+          213.0,
+          87.0,
+          11.0
+        ]
+      ],
+      "specialization_purity": 0.6072916388511658,
+      "kept_fraction": 0.9104166626930237
+    },
+    {
+      "variant": "sparse-capacity0.5",
+      "top_k": 1,
+      "capacity_factor": 0.5,
+      "aux_loss_weight": 0.01,
+      "load_balancing_loss": 1.0001659393310547,
+      "routing_entropy": 1.3844010829925537,
+      "routing_entropy_normalized": 0.9986342787742615,
+      "expert_utilization_max": 0.25,
+      "expert_utilization_min": 0.25,
+      "dropped_fraction": 0.5,
+      "capacity": 360,
+      "utilization": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "specialization_matrix": [
+        [
+          311.0,
+          85.0,
+          88.0,
+          172.0
+        ],
+        [
+          223.0,
+          127.0,
+          221.0,
+          219.0
+        ],
+        [
+          165.0,
+          68.0,
+          300.0,
+          258.0
+        ],
+        [
+          213.0,
+          161.0,
+          180.0,
+          89.0
+        ]
+      ],
+      "specialization_purity": 0.3635416626930237,
+      "kept_fraction": 0.5
+    },
+    {
+      "variant": "sparse-aux0",
+      "top_k": 1,
+      "capacity_factor": 1.25,
+      "aux_loss_weight": 0.0,
+      "load_balancing_loss": 1.1749848127365112,
+      "routing_entropy": 1.3063013553619385,
+      "routing_entropy_normalized": 0.9422972202301025,
+      "expert_utilization_max": 0.43290042877197266,
+      "expert_utilization_min": 0.13852813839912415,
+      "dropped_fraction": 0.27812499999999996,
+      "capacity": 900,
+      "utilization": [
+        0.24338623881340027,
+        0.18518517911434174,
+        0.13852813839912415,
+        0.43290042877197266
+      ],
+      "specialization_matrix": [
+        [
+          156.0,
+          66.0,
+          61.0,
+          373.0
+        ],
+        [
+          150.0,
+          103.0,
+          82.0,
+          455.0
+        ],
+        [
+          78.0,
+          108.0,
+          37.0,
+          568.0
+        ],
+        [
+          122.0,
+          108.0,
+          108.0,
+          305.0
+        ]
+      ],
+      "specialization_purity": 0.590624988079071,
+      "kept_fraction": 0.721875011920929
+    }
+  ]
+}

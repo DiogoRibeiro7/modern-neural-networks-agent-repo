@@ -213,6 +213,32 @@ self-referential or many-to-many links, and no hop depth beyond two. The deepest
 tested is that two message-passing rounds are needed to reach a two-hop attribute and one is
 not, which is asserted directly against the model rather than inferred from accuracy.
 
+### Track 09 — Sparse Mixture of Experts
+
+| Field | Value |
+|---|---|
+| Primary source | **Not retrieved.** No paper was fetched or read in this environment for this track |
+| Formulation used | The Switch-Transformer-style formulation named in the track prompt: softmax gating, top-k selection, per-expert capacity with dropping, and the auxiliary load-balancing loss `E · Σ f_e P_e` |
+| Official repository | Not vendored and not invoked. No reference-integration claim is made |
+| Reference comparison | **None run.** No published MoE number is reproduced or compared against |
+| Datasets | A synthetic mixture-of-functions task generated in-repo. No external data |
+| Claim level | `educational implementation` |
+
+**What is verified rather than assumed.** The auxiliary loss is checked against both of its
+exact endpoints — `1` under uniform routing and `E` under total collapse — rather than
+against a direction of change, and those distributions are constructed directly instead of
+being trained for, so the tests exercise the formula rather than the optimizer. Capacity
+overflow is checked on the output tensor: a token kept nowhere receives exactly zero from
+the layer.
+
+**A defect this track found in its own implementation.** Renormalizing the kept gates under
+`top_k = 1` yields `g / g ≡ 1`, a constant in the router's parameters, so the task loss
+contributes exactly zero gradient to routing — measured at ~1e-9 against ~3.5e-2 without
+renormalization. The auxiliary loss is then the only thing shaping the router, and it pushes
+towards uniform routing, which is the opposite of specialization. This is the explanation
+for the track's headline result and is pinned by a test. It is a property of this
+implementation's default, not a claim about any published system.
+
 ## Source verification checklist
 
 For every track, record:
