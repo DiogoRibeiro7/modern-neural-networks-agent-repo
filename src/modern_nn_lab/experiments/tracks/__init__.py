@@ -35,6 +35,11 @@ def get_track_suite(key: str) -> RunTrack:
 
         return kan.run
 
+    if key == "xlstm":
+        from modern_nn_lab.experiments.tracks import xlstm
+
+        return xlstm.run
+
     raise KeyError(f"track {key!r} has no runnable experiment suite yet")
 
 

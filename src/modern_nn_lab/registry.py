@@ -45,7 +45,8 @@ TRACKS: tuple[TrackSpec, ...] = (
         "xLSTM",
         "sequence",
         "Can recurrent memory scale competitively?",
-        "compact reproduction",
+        "educational implementation",
+        "complete",
     ),
     TrackSpec(
         "mamba3",

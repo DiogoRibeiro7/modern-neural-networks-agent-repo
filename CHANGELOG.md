@@ -22,6 +22,12 @@ experimental results, as defined in [`docs/claim_policy.md`](docs/claim_policy.m
   B-spline machinery, KAN layer and network, matched-budget MLP baseline, two ablations,
   hyperparameter sensitivity sweeps, a tabular benchmark against tree ensembles, 37
   invariant tests, 90 committed records, and `reports/kan.md`.
+- **Track 02 — xLSTM** (claim level: `educational implementation`): sLSTM and mLSTM cells
+  with exponential gating, normalizer state, and a running-maximum stabilizer; LSTM, GRU,
+  and causal-Transformer baselines matched by width to the xLSTM parameter budget; the
+  gating ablation; shared copy / selective-recall / state-tracking diagnostics; a
+  context-scaling study; 41 invariant tests; 108 committed records; and `reports/xlstm.md`.
+- A `Split` protocol so one experiment runner serves tabular and sequence splits alike.
 - `modern-nn run-track`, per-track experiment suites, non-Torch baseline records
   (`experiments/external.py`), and marker-based report generation
   (`experiments/reporting.py`).

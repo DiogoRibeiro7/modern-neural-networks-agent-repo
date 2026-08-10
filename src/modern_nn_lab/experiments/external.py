@@ -18,7 +18,7 @@ import numpy as np
 import torch
 from torch import Tensor
 
-from modern_nn_lab.experiments.data import SupervisedSplit
+from modern_nn_lab.experiments.data import Split
 from modern_nn_lab.experiments.profiling import Stopwatch
 from modern_nn_lab.experiments.records import (
     ExperimentRecord,
@@ -85,7 +85,7 @@ def count_estimator_parameters(estimator: Estimator) -> int:
 
 def run_external_baseline(
     factory: EstimatorFactory,
-    split: SupervisedSplit,
+    split: Split,
     *,
     spec: RunSpec,
     metric_fn: Callable[[Tensor, Tensor], float],
