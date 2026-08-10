@@ -39,6 +39,27 @@ official implementation. That is exactly why the claim level is
 `educational implementation` and not `compact reproduction`: this track claims a correct
 implementation of the described mechanism, not a reproduction of the paper's results.
 
+### Track 02 — xLSTM
+
+| Field | Value |
+|---|---|
+| Primary source | Beck et al., *xLSTM: Extended Long Short-Term Memory*, arXiv:2405.04517 |
+| Formulation used | sLSTM (scalar memory, memory mixing) and mLSTM (matrix memory, no mixing), both with exponential input gating, a normalizer state, and the running-maximum stabilizer |
+| Official repository | `NX-AI/xlstm` (not vendored, not invoked; no reference-integration claim is made) |
+| Reference comparison | **None run.** No number in `reports/xlstm.md` is compared against the paper's or the official implementation's. |
+| Datasets | Three synthetic sequence tasks defined in-repo (copy, selective recall, state tracking). No external data. |
+| Deviations | Five, enumerated in [`src/modern_nn_lab/tracks/xlstm/README.md`](../src/modern_nn_lab/tracks/xlstm/README.md#known-approximations-and-deviations-from-the-primary-source) |
+| Claim level | `educational implementation` |
+
+**Verification limitation, stated plainly.** The recurrences are verified step-by-step
+against reference implementations of the published equations written directly in the
+tests, and the stabilizer is verified to keep 400-step sequences finite. They were not
+compared numerically against the authors' code, the paper was not re-downloaded and
+diffed inside this environment, and no language-modelling experiment was run. The most
+consequential omission is the systems one: this implementation steps the recurrence in
+Python, so **no throughput number in this track is evidence about xLSTM's achievable
+speed**.
+
 ## Source verification checklist
 
 For every track, record:

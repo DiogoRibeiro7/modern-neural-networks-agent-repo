@@ -1,5 +1,40 @@
-"""xlstm research track.
+"""xLSTM: extended LSTM with exponential gating and matrix memory.
 
-This package is intentionally empty in the initial scaffold. Follow the matching
-prompt under ``prompts/`` before adding the implementation.
+Mechanism under study: replacing the sigmoid input gate with an exponential one, and
+carrying an explicit normalizer state so the unbounded gate stays usable. See
+``README.md`` in this package for the mathematical specification, the equation-to-code
+mapping, and the deviations from the primary source.
 """
+
+from modern_nn_lab.tracks.xlstm.cells import (
+    GateKind,
+    MLSTMCell,
+    MLSTMState,
+    SLSTMCell,
+    SLSTMState,
+)
+from modern_nn_lab.tracks.xlstm.config import XLSTMConfig, XLSTMExperimentConfig
+from modern_nn_lab.tracks.xlstm.model import (
+    XLSTM,
+    CausalTransformer,
+    RecurrentBaseline,
+    TokenSequenceModel,
+    count_parameters,
+    match_width_to_budget,
+)
+
+__all__ = [
+    "XLSTM",
+    "CausalTransformer",
+    "GateKind",
+    "MLSTMCell",
+    "MLSTMState",
+    "RecurrentBaseline",
+    "SLSTMCell",
+    "SLSTMState",
+    "TokenSequenceModel",
+    "XLSTMConfig",
+    "XLSTMExperimentConfig",
+    "count_parameters",
+    "match_width_to_budget",
+]

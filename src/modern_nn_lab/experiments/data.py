@@ -13,6 +13,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass
+from typing import Protocol, runtime_checkable
 
 import torch
 from torch import Tensor
@@ -24,6 +25,69 @@ MIN_SPLIT_SAMPLES = 3
 
 RATIO_TOLERANCE = 1e-6
 """Permitted floating-point slack when checking that split ratios sum to one."""
+
+
+@runtime_checkable
+class Split(Protocol):
+    """What the experiment runner needs from a dataset split.
+
+    Tabular and sequence tasks have incompatible tensor shapes and incompatible task
+    metadata, but the runner only ever needs six tensors and the provenance fields. This
+    protocol is what lets one runner serve both without either knowing about the other.
+    """
+
+    # Declared as read-only properties, not plain attributes: the concrete splits are
+    # frozen dataclasses, and a settable protocol member would reject them.
+
+    @property
+    def name(self) -> str:
+        """Dataset identifier recorded with results."""
+        ...
+
+    @property
+    def train_inputs(self) -> Tensor:
+        """Training inputs."""
+        ...
+
+    @property
+    def train_targets(self) -> Tensor:
+        """Training targets."""
+        ...
+
+    @property
+    def val_inputs(self) -> Tensor:
+        """Validation inputs; these drive in-training evaluation."""
+        ...
+
+    @property
+    def val_targets(self) -> Tensor:
+        """Validation targets."""
+        ...
+
+    @property
+    def test_inputs(self) -> Tensor:
+        """Test inputs; scored exactly once, after training."""
+        ...
+
+    @property
+    def test_targets(self) -> Tensor:
+        """Test targets."""
+        ...
+
+    @property
+    def strategy(self) -> str:
+        """Description of how the split was produced."""
+        ...
+
+    @property
+    def metadata(self) -> dict[str, object]:
+        """JSON-serializable task or dataset parameters."""
+        ...
+
+    @property
+    def fingerprint(self) -> str:
+        """Content fingerprint over every tensor in the split."""
+        ...
 
 
 @dataclass(frozen=True, slots=True)

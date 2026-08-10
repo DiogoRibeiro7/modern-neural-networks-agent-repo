@@ -13,7 +13,7 @@ pipeline with a Python 3.11-3.13 test matrix. No architecture track status chang
 | Track | Specification | Core implementation | Tests | Benchmarks | Report | Status |
 |---|---:|---:|---:|---:|---:|---|
 | KAN | 100% | 100% | 100% | 100% | 100% | complete |
-| xLSTM | 0% | 0% | 0% | 0% | 0% | queued |
+| xLSTM | 100% | 100% | 100% | 100% | 100% | complete |
 | Mamba-3 | 0% | 0% | 0% | 0% | 0% | queued |
 | TTT | 0% | 0% | 0% | 0% | 0% | queued |
 | Titans | 0% | 0% | 0% | 0% | 0% | queued |
@@ -24,15 +24,14 @@ pipeline with a Python 3.11-3.13 test matrix. No architecture track status chang
 | Flow Matching | 0% | 0% | 0% | 0% | 0% | queued |
 | JEPA | 0% | 0% | 0% | 0% | 0% | queued |
 
-Milestone **M0 (repository contracts)** is complete. Track 01 (KAN) is the first track
-completed end to end and establishes the conventions every later track follows.
+Milestone **M0 (repository contracts)** is complete. Tracks 01 (KAN) and 02 (xLSTM) are
+complete end to end and establish the conventions every later track follows.
 
 ## Next atomic milestone
 
-Execute `prompts/02_xlstm.md`: implement compact sLSTM and mLSTM cells with exponential
-gating and the normalizer/stabilizer states, add the shared synthetic sequence tasks
-(copy, selective recall, state tracking), and compare against LSTM, GRU, and a
-matched-parameter causal Transformer.
+Execute `prompts/03_mamba3.md`: verify the primary source, implement a transparent
+selective state-space recurrence, and reuse the shared sequence tasks from Track 02 so the
+comparison against xLSTM, LSTM, GRU, and the Transformer is on identical data.
 
 ## Last verification
 
@@ -53,7 +52,19 @@ matched-parameter causal Transformer.
 - Ran `python scripts/validate_scaffold.py`, `python scripts/validate_results.py`,
   `python scripts/report_kan.py`, `python scripts/plot_kan.py`.
 
-### Corrected defect worth carrying forward
+**Track 02 — xLSTM** (claim level: `educational implementation`)
+
+- Added `tracks/xlstm/` (`cells`, `model`, `config`, `README`), the shared sequence-task
+  module `experiments/tasks/sequence.py`, the experiment suite, and the report generator.
+- Added a `Split` protocol so one runner serves both tabular and sequence splits.
+- 41 invariant tests: task construction and scoring masks, causality under future-token
+  modification for **all five** architectures, two-step hand-computed sLSTM and mLSTM
+  recurrences against unstabilized references, 400-step finiteness, exact reset
+  semantics, gate-ablation isolation, determinism, serialization, and width matching.
+- 108 records committed under `results/xlstm/`, all `status="success"`.
+- Ran the full gate: ruff, ruff format, mypy, pytest, both validators, report generator.
+
+### Corrected defects worth carrying forward
 
 The first version of the KAN suite trained every model at one shared learning rate. The
 MLP baseline was badly under-trained at that rate, producing an apparent 1000x advantage
@@ -62,6 +73,13 @@ from the same grid on validation data. **Every later track must use per-architec
 learning-rate selection**, and any margin of several orders of magnitude should be treated
 as a suspected baseline failure until checked. Details in `reports/kan.md`, section 9.
 
+**Stabilized recurrences must be tested against an unstabilized reference.** The mLSTM
+covering rule `max(|n^T q|, 1)` is not scale-invariant, so applying it to the stabilized
+state silently computed the wrong function. Shapes, finiteness, and training behaviour
+were all unremarkable; only a hand-computed two-step comparison caught it. Every later
+track that stabilizes a recurrence must carry the same kind of test. Details in
+`reports/xlstm.md`, section 8.
+
 ### Unresolved
 
 - `Tensor.backward` is unannotated in the Torch distribution, so one narrowly scoped
@@ -69,7 +87,13 @@ as a suspected baseline failure until checked. Details in `reports/kan.md`, sect
   justification.
 - Adaptive grid updates are implemented and tested but excluded from the reported KAN
   training loop; they are listed as deviation 4 and as a next experiment.
-- Ten architecture tracks remain queued.
+- Nine architecture tracks remain queued (Mamba-3, TTT, Titans, Nested Learning/Hope,
+  PFN/TabPFN, Relational FM, Sparse MoE, Flow Matching, JEPA) plus the final integration
+  prompt.
+- The xLSTM selective-recall diagnostic did not discriminate between any two
+  architectures at this budget; it needs more data or a larger memory to be informative.
+- The xLSTM sLSTM variant is not width-matched to the mLSTM variant (8578 vs 4614
+  parameters). The LSTM comparison resolves the confound for state tracking only.
 
 ### Known environment issue
 
