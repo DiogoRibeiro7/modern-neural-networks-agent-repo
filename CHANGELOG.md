@@ -12,6 +12,13 @@ experimental results, as defined in [`docs/claim_policy.md`](docs/claim_policy.m
 
 ### Added
 
+- Shared experiment harness under `modern_nn_lab.experiments`: versioned
+  `ExperimentRecord` schema, leakage-safe splits, one shared supervised training loop,
+  metrics with bootstrap intervals, capacity/latency profiling, and multi-seed
+  orchestration that is the sole writer of records.
+- `results/` for committed raw records, `scripts/validate_results.py`, a CI job that
+  re-validates every record against the current schema, and `modern-nn summarize`.
+
 - MIT license, contribution guide, code of conduct, security policy, and citation metadata.
 - Issue and pull-request templates, `CODEOWNERS`, and Dependabot configuration.
 - CodeQL analysis workflow and an extended CI matrix with coverage reporting.

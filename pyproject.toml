@@ -73,6 +73,10 @@ ignore = [
 "tests/*" = ["D", "PLR2004", "ARG"]
 "scripts/*" = ["D", "PLR2004"]
 
+[tool.ruff.lint.flake8-bugbear]
+# Typer expresses CLI metadata through call-valued defaults; they are not mutable state.
+extend-immutable-calls = ["typer.Option", "typer.Argument"]
+
 [tool.ruff.lint.pydocstyle]
 convention = "google"
 
@@ -94,7 +98,7 @@ ignore_missing_imports = true
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-ra --strict-markers --strict-config"
-pythonpath = ["src"]
+pythonpath = ["src", "."]
 markers = [
     "slow: experiments that take more than a few seconds",
 ]

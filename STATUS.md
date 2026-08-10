@@ -24,26 +24,37 @@ pipeline with a Python 3.11-3.13 test matrix. No architecture track status chang
 | Flow Matching | 0% | 0% | 0% | 0% | 0% | queued |
 | JEPA | 0% | 0% | 0% | 0% | 0% | queued |
 
+Milestone **M0 (repository contracts)** is complete: the package installs, the registry
+works, the scaffold validator passes, CI runs, and the shared experiment schema is
+implemented and enforced.
+
 ## Next atomic milestone
 
-Implement the shared experiment harness required by `docs/experiment_contract.md`
-(experiment records, seeded training loop, profiling, and shared synthetic tasks) so that
-track results are comparable from the first track onward. Then execute `prompts/01_kan.md`.
+Execute `prompts/01_kan.md`: verify primary sources, write the track mathematical
+specification, add failing invariant tests, then implement KAN layers on top of the shared
+harness.
 
 ## Last verification
 
-- Added `LICENSE` (MIT), `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`,
-  `CHANGELOG.md`, `CITATION.cff`, `.editorconfig`, and `.gitattributes`.
-- Added issue forms, a pull-request template, `CODEOWNERS`, Dependabot, and CodeQL analysis.
-- Split CI into `static` and `test` jobs, added a 3.11/3.12/3.13 matrix, CPU-only Torch
-  installation, coverage reporting, concurrency cancellation, and least-privilege permissions.
-- Extended Ruff rule selection (`N`, `C4`, `PT`, `RET`, `ARG`, `PL`, `D`), documented each
-  ignore, and added coverage configuration and pytest markers.
-- Ran `python -m ruff check .`.
-- Ran `python -m ruff format --check .`.
-- Ran `python -m mypy src`.
-- Ran `python -m pytest`.
-- Ran `python scripts/validate_scaffold.py`.
+- Added `modern_nn_lab.experiments` with `records`, `data`, `training`, `evaluation`,
+  `profiling`, and `runner` modules.
+- Added `results/`, `scripts/validate_results.py`, a CI record-audit job, and the
+  `modern-nn summarize` command.
+- Added 59 harness tests covering schema immutability and versioning, fingerprint
+  sensitivity, split disjointness, train-only standardization, batching alignment,
+  training determinism, divergence reporting, refusal to aggregate diverged runs, and
+  parameter/latency accounting.
+- Ran `python -m ruff check .` — clean.
+- Ran `python -m ruff format --check .` — 34 files formatted.
+- Ran `python -m mypy src` — no issues in 24 source files.
+- Ran `python -m pytest` — 65 passed.
+- Ran `python scripts/validate_scaffold.py` and `python scripts/validate_results.py`.
+
+### Unresolved
+
+- `Tensor.backward` is unannotated in the Torch distribution, so one narrowly scoped
+  `# type: ignore[no-untyped-call]` remains in `experiments/training.py` with an inline
+  justification.
 
 ### Known environment issue
 

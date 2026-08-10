@@ -67,9 +67,12 @@ modern-neural-networks-lab/
 │   ├── contracts.py
 │   ├── registry.py
 │   ├── reproducibility.py
+│   ├── experiments/          # records, splits, training loop, profiling, runner
 │   └── tracks/
+├── reports/                  # one report per track
+├── results/                  # committed raw experiment records
 ├── tests/
-└── artifacts/                # generated outputs; ignored by Git
+└── artifacts/                # generated figures; ignored by Git
 ```
 
 ## Development order
@@ -98,6 +101,7 @@ poetry run pytest
 poetry run ruff check .
 poetry run mypy src
 poetry run modern-nn list-tracks
+poetry run modern-nn summarize        # aggregate committed records across seeds
 ```
 
 The project begins with scaffolding and contract tests. Track implementations are intentionally incomplete until the coding agent executes the prompts in `prompts/`.
