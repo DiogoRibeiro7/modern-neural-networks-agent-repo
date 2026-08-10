@@ -55,6 +55,11 @@ def get_track_suite(key: str) -> RunTrack:
 
         return titans.run
 
+    if key == "hope":
+        from modern_nn_lab.experiments.tracks import hope
+
+        return hope.run
+
     raise KeyError(f"track {key!r} has no runnable experiment suite yet")
 
 

@@ -1,10 +1,37 @@
 track: 06_nested_learning_hope
-model: hope_prototype
-task: continual_sequence
+model: nested_learner
+task: continual_stream
+claim_level: research prototype
+
+# What is implemented. The Continuum Memory System and the Hope architecture are NOT,
+# because sections 7-8 of the source were not read; see docs/nested_learning_audit.md.
+implements: [level-decomposition, momentum-as-second-level, self-referential-rule]
+not_implemented: [continuum-memory-system, hope-architecture, m3-optimizer]
+
 seed: 1729
-batch_size: 128
-epochs: 100
-learning_rate: 0.001
-parameter_budget: null
+seeds: [0, 1, 2, 3, 4]
+learning_rate_grid: [0.003, 0.01, 0.03]   # selected per learner on validation
+
+# Level structure.
+momentum_decay: 0.9        # horizon 1/(1-decay) ~ 10 samples
+momentum_period: 1         # the "slow" variant uses 4
+init_scale: 0.01           # nonzero so that seeds are actually different runs
+
+# Continual stream.
+n_tasks: 4
+samples_per_task: 200
+test_samples_per_task: 60
+d_in: 8
+d_out: 4
+few_shot_samples: 20
+
+learners: [one-level, two-level, two-level-slow, two-level-reset, self-referential]
+
+parameter_budget: identical   # every learner is a single d_out x d_in matrix
 compute_budget: null
-notes: "Scaffold configuration; tune only after the baseline is established."
+notes: >-
+  The headline metric is MSE across ALL tasks after the whole stream, i.e. retention rather
+  than plasticity. Learning rates are selected per learner because a two-level learner's
+  effective step is eta/(1-decay); a shared rate compares step sizes, not level structures.
+  Seed variance covers initialization only, on a convex problem, so the intervals are
+  narrow by construction and say nothing about variability across streams.

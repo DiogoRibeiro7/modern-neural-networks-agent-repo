@@ -78,6 +78,7 @@ TRACKS: tuple[TrackSpec, ...] = (
         "continual learning",
         "Can learning operate across nested timescales?",
         "research prototype",
+        "complete",
     ),
     TrackSpec(
         "pfn",

@@ -43,6 +43,12 @@ experimental results, as defined in [`docs/claim_policy.md`](docs/claim_policy.m
   ablations; a needle task with controlled write-to-query distance; a memory-diagnostics
   artefact carrying per-token write/read traces and a forgetting curve; 28 invariant tests;
   60 committed records; `reports/titans.md`.
+- **Track 06 — Nested Learning** (claim level: `research prototype`): a formalization
+  audit written before any code, optimization levels as separately testable objects with
+  explicit update frequencies, one-level/two-level/slow/reset/self-referential learners
+  over a continual stream, a continual-diagnostics artefact, 24 tests including an exact
+  match against `torch.optim.SGD(momentum=0.9)`, 50 committed records, and `reports/hope.md`.
+  The Continuum Memory System and the Hope architecture are deliberately not implemented.
 - Record filenames now include the dataset fingerprint, and the result validator fails when
   one aggregation group mixes datasets — a label collision had silently overwritten records.
 - `modern_nn_lab.models.sequence`: shared token-sequence scaffolding and baselines,

@@ -22,7 +22,7 @@ repository's claim boundaries.
 | Mamba-3 | 100% | 100% | 100% | 100% | 100% | complete |
 | TTT | 100% | 100% | 100% | 100% | 100% | complete |
 | Titans | 100% | 100% | 100% | 100% | 100% | complete |
-| Nested Learning / Hope | 0% | 0% | 0% | 0% | 0% | queued |
+| Nested Learning / Hope | 100% | partial | 100% | 100% | 100% | complete (prototype) |
 | PFN / TabPFN | 0% | 0% | 0% | 0% | 0% | queued |
 | Relational FM | 0% | 0% | 0% | 0% | 0% | queued |
 | Sparse MoE | 0% | 0% | 0% | 0% | 0% | queued |
@@ -30,15 +30,16 @@ repository's claim boundaries.
 | JEPA | 0% | 0% | 0% | 0% | 0% | queued |
 
 Milestone **M0 (repository contracts)** is complete. Tracks 01 (KAN), 02 (xLSTM),
-03 (Mamba-3), 04 (TTT), and 05 (Titans) are complete end to end and establish the conventions every later track
+03 (Mamba-3), 04 (TTT), 05 (Titans), and 06 (Nested Learning) are complete end to end and establish the conventions every later track
 follows. Tracks 02 and 03 share task generation, so their records are directly comparable.
 
 ## Next atomic milestone
 
-Track 06 (Nested Learning / Hope). Begin with the formalization audit the prompt requires:
-derive the nested optimization levels, write the update equations, and state which
-variables change at which timescale, **before** writing any code. Treat it as a research
-prototype and label speculative interpretation as such.
+Track 07 (Prior-Fitted Networks / TabPFN). The prompt splits this into two deliverables
+that must not be conflated: a PFN trained from scratch over synthetic task priors, and a
+benchmark of the official TabPFN checkpoint against strong tabular baselines. The
+pretraining advantage of the checkpoint must be stated prominently wherever the two are
+compared.
 
 ## Last verification
 
@@ -119,6 +120,22 @@ prototype and label speculative interpretation as such.
   magnitude and gate traces, plus a forgetting curve whose crossover sits at the
   short-term window size.
 
+**Track 06 — Nested Learning** (claim level: `research prototype`)
+
+- The **formalization audit** (`docs/nested_learning_audit.md`) was written before any
+  code, as the prompt requires: it derives the levels, their states, objectives, and
+  update frequencies from equations 1, 8-13 and 58-60, and records which stages of the
+  prompt's staged strategy are implemented and which are declined.
+- Added `tracks/hope/` (`levels`, `learner`, `README`), a continual-stream experiment, and
+  the report generator. The whole suite runs in about twelve seconds.
+- 24 tests, one per level transition. The decisive one asserts that the two-level
+  composition equals `torch.optim.SGD(momentum=0.9)` step for step — the falsifiable
+  content of the source's claim that momentum is a second optimization level.
+- 50 records plus a continual-diagnostics artefact under `results/hope/`.
+- **The Continuum Memory System and the Hope architecture are deliberately NOT
+  implemented**, because sections 7-8 of the source were not read and the prompt permits
+  that stage only under an unambiguous mapping. No model in this track is named Hope.
+
 ### Corrected defects worth carrying forward
 
 The first version of the KAN suite trained every model at one shared learning rate. The
@@ -149,6 +166,13 @@ normalizing keys, and averaging the loss over features fixes it. Any later track
 implements an online update rule should measure state magnitude over a long sequence
 *before* trusting it. Details in `reports/titans.md`, section 8.
 
+**Seeds must actually vary something.** The first Nested Learning run reported five seeds
+with intervals of exactly zero width, because the learners were deterministic and the
+stream was fixed — which reads as evidence of stability rather than as an absence of
+variation. Any track whose model has no stochastic component must introduce one
+deliberately (seeded initialization) or report a single run honestly. Details in
+`reports/hope.md`, section 8.
+
 ### Unresolved
 
 - `Tensor.backward` is unannotated in the Torch distribution, so one narrowly scoped
@@ -156,8 +180,13 @@ implements an online update rule should measure state magnitude over a long sequ
   justification.
 - Adaptive grid updates are implemented and tested but excluded from the reported KAN
   training loop; they are listed as deviation 4 and as a next experiment.
-- Six architecture tracks remain queued (Nested Learning/Hope, PFN/TabPFN, Relational FM,
-  Sparse MoE, Flow Matching, JEPA) plus the final integration prompt.
+- Five architecture tracks remain queued (PFN/TabPFN, Relational FM, Sparse MoE, Flow
+  Matching, JEPA) plus the final integration prompt.
+- Nested Learning implements the level decomposition only. The Continuum Memory System and
+  Hope remain unimplemented pending a reading of sections 7-8 of the source.
+- Nested Learning's seed intervals cover initialization on a convex problem and are
+  therefore narrow by construction; they describe reproducibility, not uncertainty about
+  the conclusion.
 - Titans implements MAG only. The source's recommended variant, Memory as Context, is not
   implemented, so no result here bears on it.
 - Titans' surprise signal does **not** discriminate repeated from one-off facts in these
