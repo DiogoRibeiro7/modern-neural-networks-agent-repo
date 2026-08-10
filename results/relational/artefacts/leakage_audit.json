@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "track": "relational",
+  "measurement": "temporal_leakage_audit",
+  "note": "`leakage_canary_accuracy` is the accuracy a pipeline reaches by reading post-timestamp rows. The sampler cannot reach it, and the gated row counts beside the ungated ones show why: the future rows are simply absent. `min_event_age_observed` is over rows carrying a timestamp; static rows are exempt because they have none.",
+  "regimes": [
+    {
+      "regime": "one_hop",
+      "leakage_canary_accuracy": 1.0,
+      "rows_visible_gated": 17.579999923706055,
+      "rows_visible_ungated": 18.486665725708008,
+      "min_event_age_observed": 0.0020425901748239994,
+      "mean_paths_per_prediction": 16.58,
+      "distinct_paths": [
+        "customers -> orders",
+        "customers -> orders -> products",
+        "customers -> signals"
+      ]
+    },
+    {
+      "regime": "multi_hop",
+      "leakage_canary_accuracy": 1.0,
+      "rows_visible_gated": 17.579999923706055,
+      "rows_visible_ungated": 18.486665725708008,
+      "min_event_age_observed": 0.0020425901748239994,
+      "mean_paths_per_prediction": 16.58,
+      "distinct_paths": [
+        "customers -> orders",
+        "customers -> orders -> products",
+        "customers -> signals"
+      ]
+    },
+    {
+      "regime": "temporal",
+      "leakage_canary_accuracy": 1.0,
+      "rows_visible_gated": 17.579999923706055,
+      "rows_visible_ungated": 18.486665725708008,
+      "min_event_age_observed": 0.0020425901748239994,
+      "mean_paths_per_prediction": 16.58,
+      "distinct_paths": [
+        "customers -> orders",
+        "customers -> orders -> products",
+        "customers -> signals"
+      ]
+    },
+    {
+      "regime": "irrelevant",
+      "leakage_canary_accuracy": 1.0,
+      "rows_visible_gated": 20.704999923706055,
+      "rows_visible_ungated": 21.611665725708008,
+      "min_event_age_observed": 0.0024079871363937855,
+      "mean_paths_per_prediction": 19.705,
+      "distinct_paths": [
+        "customers -> orders",
+        "customers -> orders -> products",
+        "customers -> signals"
+      ]
+    },
+    {
+      "regime": "cold_start",
+      "leakage_canary_accuracy": 1.0,
+      "rows_visible_gated": 3.9800000190734863,
+      "rows_visible_ungated": 5.980000019073486,
+      "min_event_age_observed": 0.0038682410959154367,
+      "mean_paths_per_prediction": 2.98,
+      "distinct_paths": [
+        "customers -> signals"
+      ]
+    }
+  ],
+  "explainability_example": {
+    "regime": "multi_hop",
+    "note": "Ages are elapsed times on unnormalized rows, so they are comparable with the audit above. Attributions come from an untrained model, so they show what the architecture can reach rather than what a fitted model relies on; the path list beside them is exact either way.",
+    "paths": [
+      "customers -> orders [slots [0, 1]] age 2.549, value -0.762, attribution -0.1590",
+      "customers -> orders [slots [0, 2]] age 3.525, value -1.854, attribution -0.3509",
+      "customers -> orders [slots [0, 3]] age 4.106, value +0.079, attribution -0.1407",
+      "customers -> orders [slots [0, 4]] age 4.130, value -0.329, attribution -0.1870",
+      "customers -> orders [slots [0, 5]] age 4.439, value +0.413, attribution -0.0948",
+      "customers -> orders -> products [slots [0, 1, 9]] age 0.000, value +4.115, attribution +0.0573",
+      "customers -> orders -> products [slots [0, 2, 10]] age 0.000, value +4.047, attribution +0.0400",
+      "customers -> orders -> products [slots [0, 3, 11]] age 0.000, value +5.999, attribution +0.0710",
+      "customers -> orders -> products [slots [0, 4, 12]] age 0.000, value +5.035, attribution +0.0580",
+      "customers -> orders -> products [slots [0, 5, 13]] age 0.000, value +5.105, attribution +0.0474",
+      "customers -> signals [slots [0, 17]] age 1.566, value -1.081, attribution -0.0764",
+      "customers -> signals [slots [0, 18]] age 2.504, value +0.972, attribution -0.0536",
+      "customers -> signals [slots [0, 19]] age 2.653, value -1.432, attribution -0.1302",
+      "customers -> signals [slots [0, 20]] age 3.010, value -0.004, attribution -0.0733",
+      "customers -> signals [slots [0, 21]] age 4.237, value -0.588, attribution -0.1232"
+    ]
+  }
+}

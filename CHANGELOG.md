@@ -59,6 +59,16 @@ experimental results, as defined in [`docs/claim_policy.md`](docs/claim_policy.m
   PFN's up-front cost; 20 tests; and `reports/pfn.md`. **The official TabPFN checkpoint is
   not executed** — it is license-gated behind an interactive flow — so the adapter ships
   behind an optional extra and no TabPFN number appears anywhere in the track.
+- **Track 08 — Relational Foundation Models** (claim level: `research prototype`): a
+  prototype that keeps rows as rows — typed columns, foreign-key pointers and timestamps —
+  and passes messages along foreign keys instead of flattening the tables first; five
+  diagnostic regimes (one-hop, multi-hop, temporal, irrelevant tables, cold start) against a
+  homogeneous-GNN baseline, leakage-safe feature engineering with a GBDT, and a
+  target-table-only floor, all at matched parameter counts; temporal gating concentrated in
+  a single module every model reads from; a planted post-timestamp shortcut that makes the
+  leakage tests positive controls rather than assertions; an exact reachable-path trace with
+  separate gradient attribution; 45 tests; and `reports/relational.md`. No relational
+  foundation model is reproduced or invoked.
 - Record filenames now include the dataset fingerprint, and the result validator fails when
   one aggregation group mixes datasets — a label collision had silently overwritten records.
 - `modern_nn_lab.models.sequence`: shared token-sequence scaffolding and baselines,

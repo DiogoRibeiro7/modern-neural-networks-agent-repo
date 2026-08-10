@@ -24,13 +24,13 @@ repository's claim boundaries.
 | Titans | 100% | 100% | 100% | 100% | 100% | complete |
 | Nested Learning / Hope | 100% | partial | 100% | 100% | 100% | complete (prototype) |
 | PFN / TabPFN | 100% | 100% | 100% | 100% | 100% | complete (deliverable A) |
-| Relational FM | 0% | 0% | 0% | 0% | 0% | queued |
+| Relational FM | 100% | 100% | 100% | 100% | 100% | complete (prototype) |
 | Sparse MoE | 0% | 0% | 0% | 0% | 0% | queued |
 | Flow Matching | 0% | 0% | 0% | 0% | 0% | queued |
 | JEPA | 0% | 0% | 0% | 0% | 0% | queued |
 
 Milestone **M0 (repository contracts)** is complete. Tracks 01 (KAN), 02 (xLSTM),
-03 (Mamba-3), 04 (TTT), 05 (Titans), 06 (Nested Learning), and 07 (PFN) are complete end to end and establish the conventions every later track
+03 (Mamba-3), 04 (TTT), 05 (Titans), 06 (Nested Learning), 07 (PFN), and 08 (Relational) are complete end to end and establish the conventions every later track
 follows. Tracks 02 and 03 share task generation, so their records are directly comparable.
 
 Track 07 is complete for **deliverable A only**. Deliverable B — a benchmark of the
@@ -40,10 +40,10 @@ no TabPFN number appears anywhere in the repository.
 
 ## Next atomic milestone
 
-Track 08 (Relational Foundation Models). The prompt asks for a prototype that models
-connected tables natively rather than after a flattening join, so the decisive comparison
-is against a strong flattened-table baseline — and the flattening must be a real one, not
-a strawman, or the comparison measures nothing.
+Track 09 (Sparse Mixture of Experts). The prompt's subject is routing, so the reporting
+contract matters more than usual: activated parameters and total parameters are different
+numbers, and a comparison that uses the wrong one is not a comparison. The record schema
+already carries `activated_parameter_count` for exactly this.
 
 ## Last verification
 
@@ -165,6 +165,35 @@ a strawman, or the comparison measures nothing.
   acceptance criterion about pre-training advantage is therefore satisfied vacuously; the
   disclosure text exists in code so it travels with the record if the adapter is ever run.
 
+**Track 08 — Relational Foundation Models** (claim level: `research prototype`)
+
+- Added `tracks/relational/` (`schema`, `generator`, `sampler`, `model`, `features`,
+  `trace`, `README`), the experiment suite, and the report generator.
+- **Temporal gating lives in exactly one module**, which every model and every baseline —
+  including the GBDT's engineered features — reads its inputs from. If each model applied
+  its own filter, the leakage rules would be per-model discipline and the tests would only
+  cover whichever model they happened to call.
+- **The leakage tests are positive controls, not assertions.** Every generated database
+  plants post-timestamp rows encoding the label exactly; a leaking pipeline scores 1.00 on
+  them. The tests first demonstrate that an ungated sampler finds the shortcut, then assert
+  that the real one cannot.
+- 45 tests. The sharpest is structural rather than statistical: a one-round model's
+  prediction does not move when a product's price changes and a two-round model's does,
+  which is the falsifiable content of the claim that a two-hop dependency needs two rounds.
+- **No relational foundation model is reproduced or invoked.** The prompt's optional
+  reference adapter is not implemented, so nothing here bears on how a real one behaves.
+- **The prototype does not beat its baselines.** On three of five regimes the flattened
+  GBDT wins, and the homogeneous baseline that discards foreign keys matches or beats the
+  full model on four of five. The one decisive win is `temporal` (0.836 against 0.678 and
+  0.644), and the ablation confirms the mechanism: removing the time channel drops that
+  regime to 0.547 while costing nothing elsewhere. Per-table typing is not load-bearing at
+  all. 150 records plus a leakage-audit artefact under `results/relational/`.
+- **The comparison is narrower than intended, and the report says so.** Both "flat"
+  baselines consume the sampler's relationally joined neighbourhoods, so the track measured
+  foreign-key propagation against pooling over a correctly-joined bag — not relational
+  modelling against flattening. Recorded as the track's largest design limitation and as
+  its first next experiment.
+
 ### Corrected defects worth carrying forward
 
 The first version of the KAN suite trained every model at one shared learning rate. The
@@ -209,8 +238,15 @@ deliberately (seeded initialization) or report a single run honestly. Details in
   justification.
 - Adaptive grid updates are implemented and tested but excluded from the reported KAN
   training loop; they are listed as deviation 4 and as a next experiment.
-- Five architecture tracks remain queued (PFN/TabPFN, Relational FM, Sparse MoE, Flow
-  Matching, JEPA) plus the final integration prompt.
+- Three architecture tracks remain queued (Sparse MoE, Flow Matching, JEPA) plus the final
+  integration prompt.
+- The relational track's GBDT baseline uses joins written with knowledge of what each regime
+  depends on. That makes it strong and fair for these five regimes, but it flatters the
+  flattening approach relative to a setting where nobody knows in advance which aggregate
+  matters — which is the setting the relational argument is actually about.
+- The relational track's seed intervals cover initialization and training only: one database
+  per regime is generated from a fixed seed and shared by every model, so the intervals say
+  nothing about variability across databases.
 - Nested Learning implements the level decomposition only. The Continuum Memory System and
   Hope remain unimplemented pending a reading of sections 7-8 of the source.
 - Nested Learning's seed intervals cover initialization on a convex problem and are

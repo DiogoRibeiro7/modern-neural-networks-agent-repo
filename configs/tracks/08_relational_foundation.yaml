@@ -1,10 +1,59 @@
 track: 08_relational_foundation
-model: relational_prototype
-task: relational_prediction
+model: relational_encoder
+task: entity_classification_over_linked_tables
+claim_level: research prototype
+
+# What is implemented. No relational foundation model is reproduced, and no official
+# relational checkpoint is invoked: KumoRFM-2 is neither vendored nor called.
+implements: [typed-rows, foreign-key-message-passing, temporal-gating, path-trace]
+not_implemented: [pretrained-relational-checkpoint, text-columns, self-referential-links]
+
 seed: 1729
+seeds: [0, 1, 2, 3, 4]
+data_seed: 1729          # one database per regime, shared by every model and every seed
+
+# Schema.
+tables: [customers, orders, products, signals]
+foreign_keys:
+  - orders.customer_id -> customers
+  - orders.product_id -> products
+  - signals.customer_id -> customers
+static_tables: [products]   # no time column: facts, not events
+
+# Diagnostic regimes.
+regimes: [one_hop, multi_hop, temporal, irrelevant, cold_start]
+n_entities: 600
+n_products: 40
+orders_per_entity: 8.0
+signals_per_entity: 3.0     # x5 in the irrelevant regime
+horizon: 100.0
+recent_window: 20.0         # the window that counts in the temporal regime
+
+# Neighbourhood.
+max_events: 8               # most recent visible events
+max_distractors: 6
+rows_per_prediction: 23     # 1 entity + 8 events + 8 linked + 6 distractors
+
+# Architecture.
+d_model: 48
+n_rounds: 2                 # the minimum that can reach a two-hop attribute
+
+# Training.
+epochs: 60
 batch_size: 64
-epochs: 50
-learning_rate: 0.001
-parameter_budget: null
+learning_rate_grid: [0.001, 0.003]   # selected per architecture on validation
+
+baselines: [gnn-flat, gbdt-flat, target-only]
+ablations: [no-types, no-time]
+
+parameter_budget: matched   # widths searched per variant to match the prototype's count
 compute_budget: null
-notes: "Scaffold configuration; tune only after the baseline is established."
+notes: >-
+  Temporal gating happens in exactly one module, which every model and every baseline
+  reads its inputs from, so the leakage rules are a property of the pipeline rather than
+  per-model discipline. Each generated database contains post-timestamp rows that encode
+  the label exactly; a leaking pipeline scores 1.00 on them, which makes the leakage tests
+  positive controls rather than assertions. The train/validation/test split is
+  chronological, and normalization statistics are fitted on training rows alone. Seed
+  variance covers initialization and training only — the database is fixed — so the
+  intervals say nothing about variability across databases.
