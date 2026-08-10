@@ -9,7 +9,7 @@ This file is a starting point, not permission to skip source verification. The c
 | Mamba-3 | Lahoti et al., *Mamba-3: Improved Sequence Modeling using State Space Principles*, arXiv:2603.15569v1 (ICLR 2026) — **verified** |
 | TTT | Sun et al., *Learning to (Learn at Test Time): RNNs with Expressive Hidden States*, arXiv:2407.04620 — **verified** |
 | Titans | Behrouz et al., *Titans: Learning to Memorize at Test Time*, arXiv:2501.00663 — **verified** |
-| Nested Learning / Hope | Behrouz et al., *Nested Learning: The Illusion of Deep Learning Architectures*, arXiv:2512.24695 |
+| Nested Learning / Hope | Behrouz et al., *Nested Learning: The Illusion of Deep Learning Architectures*, arXiv:2512.24695 — **partially verified**; sections 7-8 not read, Hope not implemented |
 | PFN / TabPFN | Use the current TabPFN primary paper/model report and official package; also implement the PFN concept independently on synthetic tasks |
 | Relational FM | Hudovernik et al., *KumoRFM-2: Scaling Foundation Models for Relational Learning*, arXiv:2604.12596 |
 | Sparse MoE | Select and record one canonical routing paper plus one recent primary source before implementation |
@@ -135,6 +135,31 @@ tokens at this scale, because `theta_t` has no specified numeric range. Bounding
 normalizing keys, and averaging the loss over features makes it stable. A reader should
 treat the resulting dynamics as *a* stable instantiation of the source's rule, not as the
 authors' configuration.
+
+### Track 06 — Nested Learning
+
+| Field | Value |
+|---|---|
+| Primary source | Behrouz, Razaviyayn, Zhong, Mirrokni, *Nested Learning: The Illusion of Deep Learning Architectures*, arXiv:2512.24695 |
+| Retrieved | The PDF was fetched and read inside this environment. **Sections 2-4.2 and 5 were read**; equations 1, 8-13, 58-60 and 64-65 are transcribed. **Sections 7 and 8 were NOT read.** |
+| Formulation used | The level decomposition of gradient descent and its momentum variant, the Hebbian and Delta inner rules, and the Generalized Gradient Descent self-referential rule |
+| Official repository | Not vendored and not invoked. No reference-integration claim is made. |
+| Reference comparison | **None run.** |
+| Datasets | A synthetic continual stream of linear tasks, generated in-repo. No external data. |
+| Claim level | `research prototype` — the weakest level in the policy, and the correct one here |
+
+**What is deliberately absent.** The Continuum Memory System (§7) and the Hope
+architecture (§8) are **not implemented**, because those sections were not read and the
+track prompt permits that stage only if it can be mapped unambiguously to the source. **No
+model in this track is named Hope**, and no result here bears on the source's headline
+architectural contribution. The formalization audit in
+[`docs/nested_learning_audit.md`](nested_learning_audit.md) records this decision and its
+reasoning before any code was written, as the prompt requires.
+
+**What was verified.** Each level's state transition is tested independently, and the
+two-level composition is asserted equal to `torch.optim.SGD(momentum=0.9)` step for step —
+which is the falsifiable content of the source's claim that momentum is a second
+optimization level.
 
 ## Source verification checklist
 

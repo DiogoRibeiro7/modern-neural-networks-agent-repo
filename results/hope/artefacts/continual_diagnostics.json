@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "track": "hope",
+  "measurement": "continual_learning_diagnostics",
+  "note": "Single seed. These curves show shape, not uncertainty; the seeded comparison is in the records.",
+  "forgetting_curve": [
+    {
+      "learner": "one-level",
+      "selected_learning_rate": 0.003,
+      "per_task_mse": {
+        "0": 1.0180107355117798,
+        "1": 0.9884630441665649,
+        "2": 0.8088932037353516,
+        "3": 0.406124472618103
+      }
+    },
+    {
+      "learner": "two-level",
+      "selected_learning_rate": 0.01,
+      "per_task_mse": {
+        "0": 1.792050838470459,
+        "1": 1.8630598783493042,
+        "2": 1.8035527467727661,
+        "3": 8.051140866882633e-06
+      }
+    },
+    {
+      "learner": "two-level-slow",
+      "selected_learning_rate": 0.003,
+      "per_task_mse": {
+        "0": 1.8815841674804688,
+        "1": 1.739600419998169,
+        "2": 1.9189742803573608,
+        "3": 0.12477707862854004
+      }
+    },
+    {
+      "learner": "two-level-reset",
+      "selected_learning_rate": 0.01,
+      "per_task_mse": {
+        "0": 1.7920504808425903,
+        "1": 1.8630659580230713,
+        "2": 1.8035545349121094,
+        "3": 8.049126336118206e-06
+      }
+    },
+    {
+      "learner": "self-referential",
+      "selected_learning_rate": 0.003,
+      "per_task_mse": {
+        "0": 1.0180107355117798,
+        "1": 0.9884630441665649,
+        "2": 0.8088932037353516,
+        "3": 0.406124472618103
+      }
+    }
+  ],
+  "level_update_frequency": {
+    "one-level": {
+      "data_memory_steps": 800,
+      "gradient_memory_steps": 0,
+      "samples_seen": 800
+    },
+    "two-level": {
+      "data_memory_steps": 800,
+      "gradient_memory_steps": 800,
+      "samples_seen": 800
+    },
+    "two-level-slow": {
+      "data_memory_steps": 800,
+      "gradient_memory_steps": 200,
+      "samples_seen": 800
+    },
+    "two-level-reset": {
+      "data_memory_steps": 800,
+      "gradient_memory_steps": 200,
+      "samples_seen": 800
+    },
+    "self-referential": {
+      "data_memory_steps": 800,
+      "gradient_memory_steps": 0,
+      "samples_seen": 800
+    }
+  },
+  "few_shot_after_long_history_mse": {
+    "one-level": 1.5585185289382935,
+    "two-level": 1.0755923986434937,
+    "two-level-slow": 2.120836019515991,
+    "two-level-reset": 1.0755894184112549,
+    "self-referential": 1.5585185289382935
+  },
+  "conflicting_tasks_mse": {
+    "one-level": 0.8826664090156555,
+    "two-level": 1.797376036643982,
+    "two-level-slow": 2.370842456817627,
+    "two-level-reset": 1.79738187789917,
+    "self-referential": 0.8826664090156555
+  }
+}
