@@ -10,6 +10,14 @@ experimental results, as defined in [`docs/claim_policy.md`](docs/claim_policy.m
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-08-10
+
+**Scope.** Eight of eleven architecture tracks are complete end to end (KAN, xLSTM,
+Mamba-3, TTT, Titans, Nested Learning, Prior-Fitted Networks, Relational). Sparse MoE,
+Flow Matching, JEPA, and the cross-track integration are **not** in this release. Every
+committed result carries its claim level, and no track claims a reproduction of a
+published number.
+
 ### Added
 
 - Shared experiment harness under `modern_nn_lab.experiments`: versioned
@@ -98,5 +106,6 @@ experimental results, as defined in [`docs/claim_policy.md`](docs/claim_policy.m
   contract, mathematical notation, milestones, source registry, and track matrix.
 - Track prompts for eleven architecture tracks plus the final integration prompt.
 
-[Unreleased]: https://github.com/DiogoRibeiro7/modern-neural-networks-agent-repo/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/DiogoRibeiro7/modern-neural-networks-agent-repo/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/DiogoRibeiro7/modern-neural-networks-agent-repo/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/DiogoRibeiro7/modern-neural-networks-agent-repo/releases/tag/v0.1.0
