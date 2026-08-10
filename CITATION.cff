@@ -10,6 +10,14 @@ authors:
     orcid: "https://orcid.org/0009-0001-2022-7072"
     affiliation: ESMAD - School of Media Arts and Design, Polytechnic of Porto
 repository-code: "https://github.com/DiogoRibeiro7/modern-neural-networks-agent-repo"
+doi: 10.5281/zenodo.21879430
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.21879430
+    description: >-
+      Concept DOI. Always resolves to the latest release; cite this to refer to the
+      software in general rather than to one specific version.
+
 abstract: >-
   A reproducible experimental laboratory for modern neural-network mechanisms.
   Each architecture track carries a mathematical specification, invariant tests,
