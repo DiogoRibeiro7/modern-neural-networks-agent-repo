@@ -1,0 +1,105 @@
+{
+  "schema_version": 1,
+  "track": "mamba3",
+  "measurement": "forward_latency_vs_sequence_length",
+  "batch_size": 16,
+  "caveat": "The SSM and the recurrent baseline are stepped in Python; the Transformer uses batched attention kernels. These numbers compare implementations, not architectures, and must not be read as throughput claims.",
+  "measurements": [
+    {
+      "architecture": "mamba3",
+      "sequence_length": 16,
+      "latency_ms": 13.3946199901402,
+      "latency_ms_std": 4.287078905558065,
+      "throughput_per_s": 1194.509438250404,
+      "parameters": 4342
+    },
+    {
+      "architecture": "mamba3",
+      "sequence_length": 32,
+      "latency_ms": 26.968259969726205,
+      "latency_ms_std": 6.541484801385034,
+      "throughput_per_s": 593.2900386588212,
+      "parameters": 4342
+    },
+    {
+      "architecture": "mamba3",
+      "sequence_length": 64,
+      "latency_ms": 49.91027996875346,
+      "latency_ms_std": 9.980272411240405,
+      "throughput_per_s": 320.5752404117322,
+      "parameters": 4342
+    },
+    {
+      "architecture": "mamba3",
+      "sequence_length": 128,
+      "latency_ms": 105.60939996503294,
+      "latency_ms_std": 25.30513924370786,
+      "throughput_per_s": 151.50166562159777,
+      "parameters": 4342
+    },
+    {
+      "architecture": "lstm",
+      "sequence_length": 16,
+      "latency_ms": 1.5638199634850025,
+      "latency_ms_std": 0.4095024474496659,
+      "throughput_per_s": 10231.356788887448,
+      "parameters": 9032
+    },
+    {
+      "architecture": "lstm",
+      "sequence_length": 32,
+      "latency_ms": 3.325220011174679,
+      "latency_ms_std": 2.2552080232602205,
+      "throughput_per_s": 4811.71169012296,
+      "parameters": 9032
+    },
+    {
+      "architecture": "lstm",
+      "sequence_length": 64,
+      "latency_ms": 2.0948400255292654,
+      "latency_ms_std": 0.8231907198772758,
+      "throughput_per_s": 7637.814728099616,
+      "parameters": 9032
+    },
+    {
+      "architecture": "lstm",
+      "sequence_length": 128,
+      "latency_ms": 1.478440035134554,
+      "latency_ms_std": 0.1691122129781939,
+      "throughput_per_s": 10822.217756396072,
+      "parameters": 9032
+    },
+    {
+      "architecture": "transformer",
+      "sequence_length": 16,
+      "latency_ms": 3.753380011767149,
+      "latency_ms_std": 1.5668737618373316,
+      "throughput_per_s": 4262.824427539634,
+      "parameters": 25512
+    },
+    {
+      "architecture": "transformer",
+      "sequence_length": 32,
+      "latency_ms": 1.5969999600201845,
+      "latency_ms_std": 0.7341697259826743,
+      "throughput_per_s": 10018.78547310532,
+      "parameters": 25512
+    },
+    {
+      "architecture": "transformer",
+      "sequence_length": 64,
+      "latency_ms": 2.456500008702278,
+      "latency_ms_std": 0.5110422955113566,
+      "throughput_per_s": 6513.331953315357,
+      "parameters": 25512
+    },
+    {
+      "architecture": "transformer",
+      "sequence_length": 128,
+      "latency_ms": 3.5479999613016844,
+      "latency_ms_std": 1.4159402435427015,
+      "throughput_per_s": 4509.582912771494,
+      "parameters": 25512
+    }
+  ]
+}

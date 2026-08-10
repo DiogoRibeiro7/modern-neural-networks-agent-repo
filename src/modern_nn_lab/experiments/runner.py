@@ -23,7 +23,7 @@ from typing import Any
 import torch
 from torch import nn
 
-from modern_nn_lab.experiments.data import SupervisedSplit
+from modern_nn_lab.experiments.data import Split
 from modern_nn_lab.experiments.evaluation import Aggregate, aggregate_runs
 from modern_nn_lab.experiments.profiling import profile_inference, profile_parameters
 from modern_nn_lab.experiments.records import (
@@ -117,7 +117,7 @@ class RunGroup:
 
 def run_seeded_experiment(
     model_factory: ModelFactory,
-    split: SupervisedSplit,
+    split: Split,
     *,
     spec: RunSpec,
     training_config: TrainingConfig,
@@ -133,7 +133,8 @@ def run_seeded_experiment(
 
     Args:
         model_factory: Builds a fresh model for a given seed.
-        split: Dataset split; validation drives in-training evaluation, test is scored once.
+        split: Dataset split (tabular or sequence); validation drives in-training
+            evaluation, and the test split is scored exactly once.
         spec: Identity and reporting metadata.
         training_config: Optimization settings; the seed field is overridden per run.
         loss_fn: Training loss.

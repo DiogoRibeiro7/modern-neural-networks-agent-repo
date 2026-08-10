@@ -63,7 +63,7 @@ Split responsibilities:
 | Concern | Owner | Never does |
 |---|---|---|
 | Mechanism | `tracks/<track>/` | I/O, result storage, seeding policy |
-| Data and splits | `experiments/data.py` | model-specific preprocessing |
+| Data and splits | `experiments/data.py`, `experiments/tasks/` | model-specific preprocessing |
 | Optimization | `experiments/training.py` | metric selection, storage |
 | Evidence | `experiments/records.py`, `runner.py` | model construction |
 

@@ -11,7 +11,12 @@ that turns a model into evidence lives here:
 - :mod:`~modern_nn_lab.experiments.runner` — multi-seed orchestration.
 """
 
-from modern_nn_lab.experiments.data import SupervisedSplit, make_function_split, make_tabular_split
+from modern_nn_lab.experiments.data import (
+    Split,
+    SupervisedSplit,
+    make_function_split,
+    make_tabular_split,
+)
 from modern_nn_lab.experiments.evaluation import Aggregate, aggregate_runs, aggregate_values
 from modern_nn_lab.experiments.profiling import (
     ParameterProfile,
@@ -43,6 +48,7 @@ __all__ = [
     "ParameterProfile",
     "RunGroup",
     "RunSpec",
+    "Split",
     "SupervisedSplit",
     "TrainingConfig",
     "TrainingOutcome",

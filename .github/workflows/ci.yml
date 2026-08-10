@@ -97,8 +97,14 @@ jobs:
           python-version: "3.12"
           cache: pip
 
-      - name: Install validation dependencies
-        run: pip install torch --index-url https://download.pytorch.org/whl/cpu && pip install pydantic
+      - name: Install CPU-only Torch
+        run: pip install torch --index-url https://download.pytorch.org/whl/cpu
+
+      - name: Install project
+        run: |
+          pip install poetry
+          poetry config virtualenvs.create false
+          poetry install --no-interaction
 
       - name: Validate every committed record against the schema
         run: python scripts/validate_results.py

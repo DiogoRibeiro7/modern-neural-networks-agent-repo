@@ -1,10 +1,42 @@
 track: 04_ttt
-model: ttt_linear
-task: associative_recall
+model: ttt
+task: sequence_diagnostics
+claim_level: educational implementation
+
+# Optimization. Identical to Tracks 02 and 03 where the tasks overlap.
 seed: 1729
-batch_size: 128
-epochs: 100
-learning_rate: 0.001
-parameter_budget: null
+seeds: [0, 1, 2, 3, 4]
+batch_size: 64
+epochs: 50
+optimizer: adam
+cosine_schedule: true
+learning_rate_grid: [0.001, 0.003]   # searched per architecture on validation
+
+# Architecture.
+d_model: 32
+n_blocks: 1
+d_inner: null            # defaults to d_model // 2, a low-rank view
+inner_model: linear      # "mlp" is the TTT-MLP variant
+update_rule: online      # "batch" is provably linear attention (source Theorem 1)
+learner_updates: true    # false is the required ablation
+layernorm_residual: true # f(x) = x + LN(f_res(x))
+
+# Diagnostics.
+n_sequences: 500
+rebinding_pairs: 3       # primary task: a binding is overwritten mid-sequence
+context_scaling_pairs: [5]
+recall_pairs: 4
+recall_keys: 8
+recall_values: 8
+
+baselines: [lstm, gru, transformer]
+ablations: [frozen-learner, batch-gradient-descent, ttt-mlp]
+
+parameter_budget: matched-to-ttt
 compute_budget: null
-notes: "Scaffold configuration; tune only after the baseline is established."
+notes: >-
+  The headline metric on the rebinding task is accuracy on the POST-SHIFT answer only. The
+  pre-shift answer is ordinary associative recall, already measured by the selective-recall
+  task. This implementation uses pure online gradient descent (b = 1); the source reports
+  that mini-batch TTT with b = 16 is its single largest quality gain, so these numbers
+  should be expected to fall short of the paper's configuration.

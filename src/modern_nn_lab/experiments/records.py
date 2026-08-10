@@ -238,10 +238,20 @@ class ExperimentRecord(BaseModel):
         return fingerprint(self.config)
 
     def filename(self) -> str:
-        """Return a deterministic, collision-resistant file name for this record."""
+        """Return a deterministic, collision-resistant file name for this record.
+
+        The dataset *fingerprint* is part of the name, not just the dataset *label*. Two
+        splits can legitimately share a label while differing in their parameters — a
+        task at two sequence lengths, say — and without the fingerprint the second run
+        would silently overwrite the first, leaving a group with missing seeds and
+        results from two different datasets merged under one name.
+        """
 
         variant = self.variant or "default"
-        parts = [self.architecture, variant, self.dataset, f"seed{self.seed}"]
+        parts = [self.architecture, variant, self.dataset]
+        if self.dataset_fingerprint is not None:
+            parts.append(self.dataset_fingerprint[:8])
+        parts.append(f"seed{self.seed}")
         slug = "__".join(part.replace("/", "-").replace(" ", "-") for part in parts)
         return f"{slug}.json"
 
@@ -287,8 +297,20 @@ def load_record(path: Path | str) -> ExperimentRecord:
     return ExperimentRecord.model_validate(payload)
 
 
+ARTEFACT_DIRNAME = "artefacts"
+"""Subdirectory holding derived data that is *not* an experiment record.
+
+Serialized edge functions, routing traces, and similar diagnostics belong under
+``results/<track>/artefacts/``. They are committed so figures stay reproducible, but they
+do not satisfy the record schema and must not be validated against it.
+"""
+
+
 def iter_records(root: Path | str = RESULTS_ROOT) -> Iterator[ExperimentRecord]:
     """Yield every record under ``root`` in sorted path order.
+
+    Files under an :data:`ARTEFACT_DIRNAME` directory are skipped: they are derived
+    diagnostics, not records.
 
     Args:
         root: Directory searched recursively for ``*.json`` files.
@@ -298,6 +320,8 @@ def iter_records(root: Path | str = RESULTS_ROOT) -> Iterator[ExperimentRecord]:
     """
 
     for path in sorted(Path(root).rglob("*.json")):
+        if ARTEFACT_DIRNAME in path.parts:
+            continue
         yield load_record(path)
 
 
