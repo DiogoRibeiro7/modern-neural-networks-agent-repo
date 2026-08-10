@@ -2,9 +2,28 @@
 name = "modern-neural-networks-lab"
 version = "0.1.0"
 description = "Research-grade implementations and comparisons of modern neural-network architectures."
-authors = ["Research repository contributors"]
+authors = ["Diogo Ribeiro <hansolo.dj@gmail.com>"]
+license = "MIT"
 readme = "README.md"
+homepage = "https://github.com/DiogoRibeiro7/modern-neural-networks-agent-repo"
+repository = "https://github.com/DiogoRibeiro7/modern-neural-networks-agent-repo"
+documentation = "https://github.com/DiogoRibeiro7/modern-neural-networks-agent-repo/tree/main/docs"
+keywords = ["neural-networks", "deep-learning", "reproducibility", "research-software", "benchmarking"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Typing :: Typed",
+]
 packages = [{ include = "modern_nn_lab", from = "src" }]
+
+[tool.poetry.urls]
+"Bug Tracker" = "https://github.com/DiogoRibeiro7/modern-neural-networks-agent-repo/issues"
+"Changelog" = "https://github.com/DiogoRibeiro7/modern-neural-networks-agent-repo/blob/main/CHANGELOG.md"
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.14"
@@ -37,17 +56,59 @@ build-backend = "poetry.core.masonry.api"
 [tool.ruff]
 line-length = 100
 target-version = "py311"
+extend-exclude = [".benchmarks", "artifacts"]
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
+select = ["E", "F", "I", "B", "UP", "SIM", "RUF", "N", "C4", "PT", "RET", "ARG", "PL", "D"]
+ignore = [
+    "D100", # module docstrings are enforced by review, not by every private module
+    "D104", # namespace packages carry their documentation in the track README
+    "D202", # the repository separates docstring from body with a blank line by convention
+    "D203", # incompatible with D211
+    "D213", # incompatible with D212
+    "PLR0913", # research entry points legitimately take many explicit hyperparameters
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["D", "PLR2004", "ARG"]
+"scripts/*" = ["D", "PLR2004"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.pylint]
+max-args = 12
 
 [tool.mypy]
 python_version = "3.11"
 strict = true
 warn_unused_ignores = true
 warn_redundant_casts = true
+warn_unreachable = true
+show_error_codes = true
+
+[[tool.mypy.overrides]]
+module = ["sklearn.*", "scipy.*", "matplotlib.*", "pandas.*"]
+ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-ra --strict-markers --strict-config"
 pythonpath = ["src"]
+markers = [
+    "slow: experiments that take more than a few seconds",
+]
+filterwarnings = ["error::DeprecationWarning:modern_nn_lab.*"]
+
+[tool.coverage.run]
+branch = true
+source = ["src/modern_nn_lab"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+exclude_also = [
+    "if TYPE_CHECKING:",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+]

@@ -1,0 +1,25 @@
+* text=auto eol=lf
+
+*.py text diff=python
+*.md text diff=markdown
+*.yml text
+*.yaml text
+*.toml text
+*.json text
+*.cff text
+
+*.png binary
+*.jpg binary
+*.pdf binary
+*.npz binary
+*.npy binary
+*.pt binary
+*.pth binary
+*.ckpt binary
+
+# Keep generated and vendored material out of language statistics and diffs.
+docs/** linguist-documentation
+prompts/** linguist-documentation
+reports/** linguist-documentation
+results/** linguist-generated
+poetry.lock -diff linguist-generated

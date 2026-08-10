@@ -1,0 +1,62 @@
+name: Bug report
+description: Report incorrect behaviour in the library, experiment harness, or CLI.
+title: "fix: <short description>"
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please do not use this template for a result you merely find surprising.
+        Use the **Experiment issue** template for suspected methodology or measurement problems.
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What happens, and what should happen instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: The smallest command or snippet that reproduces the problem.
+      render: python
+    validations:
+      required: true
+
+  - type: textarea
+    id: traceback
+    attributes:
+      label: Traceback or incorrect output
+      render: text
+
+  - type: input
+    id: track
+    attributes:
+      label: Affected track
+      description: For example `kan`, `moe`, `flow`, or `shared infrastructure`.
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: |
+        Output of `python -VV`, `python -c "import torch; print(torch.__version__)"`, OS, and
+        accelerator (CPU/CUDA/MPS) with driver version where relevant.
+      render: text
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I ran `make check` on `main` and the failure is not a pre-existing gate failure.
+          required: true
+        - label: I searched existing issues.
+          required: true

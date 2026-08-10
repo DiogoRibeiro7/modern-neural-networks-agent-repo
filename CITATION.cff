@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+title: Modern Neural Networks Lab
+message: >-
+  If you use this software or its experimental results, please cite it using the
+  metadata below.
+type: software
+authors:
+  - family-names: Ribeiro
+    given-names: Diogo
+    orcid: "https://orcid.org/0009-0001-2022-7072"
+    affiliation: ESMAD - School of Media Arts and Design, Polytechnic of Porto
+repository-code: "https://github.com/DiogoRibeiro7/modern-neural-networks-agent-repo"
+abstract: >-
+  A reproducible experimental laboratory for modern neural-network mechanisms.
+  Each architecture track carries a mathematical specification, invariant tests,
+  matched-budget baselines, ablations, machine-readable experiment records, and a
+  report whose claim level is bounded by an explicit claim policy.
+keywords:
+  - neural networks
+  - machine learning
+  - deep learning
+  - reproducibility
+  - research software
+license: MIT
+version: 0.1.0
+date-released: "2026-08-08"

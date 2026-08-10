@@ -1,5 +1,12 @@
 # Modern Neural Networks Lab
 
+[![CI](https://github.com/DiogoRibeiro7/modern-neural-networks-agent-repo/actions/workflows/ci.yml/badge.svg)](https://github.com/DiogoRibeiro7/modern-neural-networks-agent-repo/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/DiogoRibeiro7/modern-neural-networks-agent-repo/actions/workflows/codeql.yml/badge.svg)](https://github.com/DiogoRibeiro7/modern-neural-networks-agent-repo/actions/workflows/codeql.yml)
+[![Python](https://img.shields.io/badge/python-3.11%20%7C%203.12%20%7C%203.13-blue)](pyproject.toml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![Code style: Ruff](https://img.shields.io/badge/code%20style-ruff-261230)](https://docs.astral.sh/ruff/)
+[![Checked with mypy](https://img.shields.io/badge/mypy-strict-2a6db2)](https://mypy-lang.org/)
+
 A research-oriented, reproducible implementation lab for modern neural-network architectures and learning paradigms beyond conventional MLPs and Transformers.
 
 This repository is intentionally **scaffold-first**. It is designed for a coding/research agent to develop one architecture at a time under a shared experimental contract, so results remain comparable and claims remain auditable.
@@ -114,6 +121,25 @@ A track is complete only when it has:
 - limitations and failed experiments documented;
 - a concise track report.
 
+## Contributing
+
+Read [`CONTRIBUTING.md`](CONTRIBUTING.md) before opening a pull request, and
+[`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) before participating. Vulnerabilities go through
+[`SECURITY.md`](SECURITY.md), never through a public issue.
+
+The quality gate is a single command:
+
+```bash
+make check
+```
+
+## Citation
+
+Citation metadata lives in [`CITATION.cff`](CITATION.cff) and [`.zenodo.json`](.zenodo.json).
+GitHub renders a ready-made citation from the former under **Cite this repository**.
+
 ## License
 
-No license is selected in this scaffold. Choose the repository license deliberately before public release.
+Released under the [MIT License](LICENSE). Optional reference integrations — official
+architecture packages and pre-trained checkpoints — remain under their own licenses, which
+are recorded per track in [`docs/source_registry.md`](docs/source_registry.md).

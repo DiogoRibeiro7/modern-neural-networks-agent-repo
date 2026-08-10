@@ -1,0 +1,52 @@
+name: Experiment issue
+description: Report a methodology, measurement, claim-level, or reproducibility problem.
+title: "exp: <short description>"
+labels: ["experiment", "methodology"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template when the code runs but the *science* looks wrong: an unfair
+        comparison, an unsupported claim, a leak, a non-reproducible figure, or a result that
+        cannot be regenerated from saved records.
+
+  - type: input
+    id: track
+    attributes:
+      label: Track
+      description: For example `xlstm`, `pfn`, `relational`.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options:
+        - Unfair baseline or budget matching
+        - Claim exceeds the claim policy
+        - Data leakage (temporal, relational, or target)
+        - Result not reproducible from saved records
+        - Missing uncertainty, seeds, or profiling data
+        - Metric or aggregation defect
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: |
+        Point to the report section, the record file under `results/`, or the code path.
+        Include seeds and configuration where relevant.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed correction
+      description: What protocol, ablation, or wording change would resolve it?
+    validations:
+      required: true

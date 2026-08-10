@@ -1,0 +1,9 @@
+# Default owner for everything in this repository.
+*       @DiogoRibeiro7
+
+# Scientific contracts: changes here affect every track's claims.
+/docs/claim_policy.md          @DiogoRibeiro7
+/docs/experiment_contract.md   @DiogoRibeiro7
+/docs/benchmark_protocol.md    @DiogoRibeiro7
+/prompts/                      @DiogoRibeiro7
+/reports/                      @DiogoRibeiro7
