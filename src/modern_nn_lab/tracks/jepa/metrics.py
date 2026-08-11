@@ -9,20 +9,24 @@ of the opposite.
 Nothing here looks at the loss. Three questions are asked of the representation directly:
 
 **Has it collapsed?** :func:`representation_variance` and :func:`effective_rank`. **Neither
-is sufficient alone, and the reason is not obvious.**
+is a sufficient collapse detector, and each fails differently.**
 
-Variance misses *dimensional* collapse: a representation can have healthy per-dimension
-standard deviation while every sample lies on a single line, and only the rank sees that.
+*Variance* misses dimensional collapse — healthy per-dimension spread is compatible with
+every sample lying on one line — and it also produces **false positives**: a representation
+scaled down by a constant has tiny variance while losing no information at all. This
+repository's identity-predictor ablation is exactly that case, at standard deviation 0.013
+and a content probe of 0.91.
 
-Effective rank misses *total* collapse, which is the failure this track actually produces.
-When an encoder becomes constant, what remains is floating-point noise, and that noise is
-**isotropic** — so the covariance has roughly equal eigenvalues in every direction and the
-effective rank comes out *high*. A fully collapsed representation in this repository's own
-measurements reports a normalized effective rank of about 0.75 while its standard deviation
-is 0.001. Reading the rank alone would have called that healthy.
+*Effective rank* misses total collapse. When an encoder becomes constant, what remains is
+floating-point noise, and that noise is **isotropic** — so the covariance has roughly equal
+eigenvalues and the rank comes out *high*. A fully collapsed model here reports a normalized
+effective rank of 0.86 while its standard deviation is 0.0002. Reading the rank alone would
+have called it healthy.
 
-So the two are reported together everywhere, and the ordering is: standard deviation first,
-because near-zero variance means the rank is describing noise rather than structure.
+**The probe is the definition; the other two are proxies.** Collapse means the representation
+no longer carries the information, and that is what :func:`linear_probe` measures directly.
+It is reported alongside both proxies, and the ``collapsed`` verdict in the report requires
+low variance *and* a failed probe — because either alone gets a real case wrong.
 
 .. math::
 
@@ -113,6 +117,13 @@ def linear_probe(
     the representation — no probe learning rate, no probe seed, nothing to tune into a
     better-looking result.
 
+    Features are **standardized using training statistics before fitting**, which makes the
+    score invariant to the representation's scale. Without that, the ridge penalty dominates
+    a small-magnitude representation and the probe reports lost information where none was
+    lost: a fully informative representation scaled by 1e-4 scores 0.004 unstandardized and
+    1.000 standardized. Scale is not information, and a probe that conflates them would
+    mark the identity-predictor ablation as collapsed when it is merely small.
+
     Args:
         train_features: Shape ``(N, d)`` representations.
         train_targets: Shape ``(N, k)`` factors to recover.
@@ -125,6 +136,13 @@ def linear_probe(
         Coefficient of determination on the held-out split, clamped below at zero. A
         representation carrying no information about the target scores zero.
     """
+
+    centre = train_features.mean(dim=0, keepdim=True)
+    # A floor rather than a clamp on the whole tensor: a dimension that is genuinely
+    # constant contributes nothing and must not be amplified into noise.
+    spread = train_features.std(dim=0, keepdim=True).clamp_min(1e-8)
+    train_features = (train_features - centre) / spread
+    test_features = (test_features - centre) / spread
 
     ones = torch.ones((train_features.shape[0], 1), dtype=train_features.dtype)
     design = torch.cat([train_features, ones], dim=-1)

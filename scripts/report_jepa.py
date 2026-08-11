@@ -17,6 +17,12 @@ RESULTS = ROOT / "results" / "jepa"
 REPORT = ROOT / "reports" / "jepa.md"
 NEWLINE = chr(10)
 
+COLLAPSE_STD = 0.05
+"""Scale below which a representation is treated as having no usable magnitude."""
+
+COLLAPSE_CONTENT = 0.5
+"""Content probe below which most of the recoverable signal is considered lost."""
+
 MODEL_ORDER = (
     "jepa-ema",
     "jepa-variance",
@@ -92,13 +98,28 @@ def _headline_table(records: list[ExperimentRecord]) -> str:
             return _mean([r.secondary_metrics[key] for r in source if key in r.secondary_metrics])
 
         std = metric("representation_std")
-        # Standard deviation is the collapse detector; the rank cannot see total collapse.
-        collapsed = "yes" if std < 0.05 else "no"
+        content = metric("content_r2")
+        # Collapse requires near-zero scale AND substantial information loss. Neither alone
+        # works: variance alone calls a merely rescaled representation collapsed, and the
+        # probe alone cannot see it at all because a scale-invariant probe recovers a trace
+        # of signal even from a near-constant encoder. The information threshold is well
+        # below the raw-feature floor (~0.93), so it separates "lost most of it" from
+        # "kept it, at small magnitude".
+        collapsed = "yes" if std < COLLAPSE_STD and content < COLLAPSE_CONTENT else "no"
         lines.append(
-            f"| {name} | {metric('content_r2'):.3f} | {metric('nuisance_r2'):.3f} | "
+            f"| {name} | {content:.3f} | {metric('nuisance_r2'):.3f} | "
             f"{metric('content_minus_nuisance'):+.3f} | {std:.4f} | "
             f"{metric('normalized_effective_rank'):.3f} | {collapsed} |"
         )
+
+    lines.append("")
+    lines.append(
+        f"_`collapsed` is `yes` when the representation standard deviation is below "
+        f"{COLLAPSE_STD} **and** the content probe is below {COLLAPSE_CONTENT}. Both "
+        "conditions are needed: scale alone would flag a representation that is merely "
+        "small, and the probe alone cannot detect collapse at all, because standardizing a "
+        "near-constant representation recovers a trace of signal from its residual._"
+    )
     return NEWLINE.join(lines)
 
 

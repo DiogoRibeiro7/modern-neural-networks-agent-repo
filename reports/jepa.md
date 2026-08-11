@@ -58,32 +58,70 @@ so "collapse did not occur" is reported below as a measurement rather than a gua
 
 ## 5. Reading the collapse metrics
 
-**Effective rank does not detect total collapse**, and the reason is easy to miss. When an
-encoder becomes constant, what remains is floating-point noise — which is *isotropic*, so
-the covariance has roughly equal eigenvalues and the effective rank comes out **high**. In
-the measurements below the collapsed model reports a healthy-looking normalized effective
-rank while its standard deviation is near zero. Reading the rank alone would have called it
-healthy.
+Both proxies are wrong on their own, and this track produced a real counterexample to each.
 
-Variance has the opposite blind spot: it misses *dimensional* collapse, where every sample
-lies on one line with healthy per-dimension spread.
+**Effective rank gives false negatives on total collapse.** When the encoder becomes
+constant, what remains is floating-point noise — which is *isotropic*, so the covariance has
+roughly equal eigenvalues and the rank reads **high**. The collapsed `jepa-none` model below
+reports a normalized effective rank of 0.86, higher than the healthy JEPA's 0.30, while its
+standard deviation is 0.0002. Ranking models by effective rank would have put the collapsed
+one near the top.
 
-So both are reported, always, standard deviation first — and the `collapsed` column is
-derived from the standard deviation, not the rank.
-`test_effective_rank_does_not_detect_total_collapse` pins the trap.
+**Variance gives false positives on a merely rescaled representation.** The identity-predictor
+ablation in §8 has a standard deviation of 0.013 — an order of magnitude below any threshold
+one would set — while its content probe reads 0.91. Nothing was lost; the representation is
+simply small. Scale is not information.
+
+Variance also has the classic blind spot in the other direction: it misses *dimensional*
+collapse, where every sample lies on one line with healthy per-dimension spread.
+
+**And the probe alone cannot detect collapse either.** This is the part that surprised us.
+The probe is standardized using training statistics, which is what makes it scale-invariant —
+unstandardized, a fully informative representation scaled by 1e-4 scores 0.004 rather than
+1.000, because the ridge penalty swamps it. But that same standardization rescues the
+*residual* of a near-constant encoder: `jepa-none` has a standard deviation of 0.0002 and
+still scores **0.153** on the content probe, because whatever tiny structure survives gets
+amplified back to unit scale before fitting.
+
+So collapse is **not binary**, and no single number decides it. The `collapsed` verdict below
+requires near-zero scale **and** substantial information loss — thresholds stated in the
+table's footnote rather than left implicit. `jepa-none` meets both; the identity-predictor
+ablation meets only the first and is correctly not flagged.
+
+Both probe properties are pinned:
+`test_the_probe_is_invariant_to_the_scale_of_the_representation` and
+`test_standardization_does_not_rescue_a_genuinely_collapsed_representation`.
 
 ## 6. Headline comparison
 
-Probes and collapse metrics side by side. A collapsed representation scores zero on both
-probes, so the probe columns alone cannot distinguish collapse from a merely uninformative
-representation.
+Probes and collapse metrics side by side, because §5 shows that no column decides the
+question on its own.
 
 <!-- generated:headline -->
+| model | content R2 | nuisance R2 | content - nuisance | repr. std | norm. eff. rank | collapsed |
+|---|---|---|---|---|---|---|
+| jepa-ema | 0.920 | 0.430 | +0.489 | 0.4535 | 0.303 | no |
+| jepa-variance | 0.428 | 0.035 | +0.393 | 0.9613 | 0.063 | no |
+| jepa-none | 0.153 | 0.016 | +0.136 | 0.0002 | 0.857 | yes |
+| autoencoder | 0.932 | 0.794 | +0.138 | 0.3556 | 0.350 | no |
+| contrastive | 0.841 | 0.002 | +0.839 | 0.1999 | 0.772 | no |
+| raw-features | 0.933 | 0.796 | +0.137 | 0.5772 | 0.434 | no |
+
+_`collapsed` is `yes` when the representation standard deviation is below 0.05 **and** the content probe is below 0.5. Both conditions are needed: scale alone would flag a representation that is merely small, and the probe alone cannot detect collapse at all, because standardizing a near-constant representation recovers a trace of signal from its residual._
 <!-- /generated:headline -->
 
 ## 7. Amount of target masking
 
 <!-- generated:masking -->
+| patches masked | content R2 | nuisance R2 | repr. std | norm. eff. rank |
+|---|---|---|---|---|
+| 1 | 0.914 | 0.278 | 0.3905 | 0.264 |
+| 2 | 0.916 | 0.445 | 0.4206 | 0.288 |
+| 4 | 0.919 | 0.416 | 0.4845 | 0.292 |
+| 6 | 0.928 | 0.464 | 0.5487 | 0.276 |
+| 7 | 0.919 | 0.237 | 0.4809 | 0.250 |
+
+_Single seed. A high content score with a low nuisance score is the goal._
 <!-- /generated:masking -->
 
 ## 8. Predictor capacity
@@ -92,11 +130,63 @@ A depth of zero is the identity predictor: the context representation must then 
 target representation, with nothing in between to absorb the difference.
 
 <!-- generated:predictor -->
+| predictor layers | content R2 | nuisance R2 | repr. std | norm. eff. rank |
+|---|---|---|---|---|
+| 0 | 0.913 | 0.138 | 0.0131 | 0.203 |
+| 1 | 0.907 | 0.233 | 0.5378 | 0.361 |
+| 2 | 0.919 | 0.416 | 0.4845 | 0.292 |
+| 4 | 0.925 | 0.486 | 0.3842 | 0.284 |
+
+_Single seed. A high content score with a low nuisance score is the goal._
 <!-- /generated:predictor -->
 
 ## 9. Interpretation
 
-_Pending the full run._
+**No learned representation beats the raw features on content.** `raw-features` scores
+0.933, and the best learned model reaches 0.932. The content factors are already linearly
+accessible in the observations, so on this task representation learning cannot be justified
+by content extraction — and any report quoting only a content probe would have shown four
+models tied near 0.93 and concluded nothing.
+
+**What separates the models is what they throw away.** The nuisance column spans two orders
+of magnitude while the content column barely moves:
+
+- `raw-features` (0.796) and `autoencoder` (0.794) retain the nuisance almost identically.
+  That is the expected consequence of the objective: an autoencoder must reconstruct every
+  patch, and the nuisance is part of what it reconstructs. It cannot discard what it is
+  scored on.
+- `jepa-ema` (0.430) halves it while holding content at 0.920.
+- `contrastive` (0.002) all but eliminates it, at a content cost of about nine points.
+
+**The contrastive baseline wins the trade this track is about.** On `content − nuisance` it
+scores +0.839 against the JEPA's +0.489. Predicting representations of masked patches did
+discard nuisance relative to reconstruction, which is the qualitative claim — but an explicit
+repulsion term did it better here, and the report should not bury that under the JEPA's
+respectable content score.
+
+**The variance hinge over-regularizes.** `jepa-variance` reaches the lowest nuisance among the
+JEPAs (0.035) but collapses content to 0.428, and its normalized effective rank of 0.063 is
+the lowest in the table — it spread the variance across dimensions as instructed while
+destroying the structure within them. Forcing a variance floor is not the same as preserving
+information, and this row is the demonstration.
+
+**Masking amount barely matters here** (§7): content sits between 0.914 and 0.928 across
+every setting from one masked patch to seven. That is a property of the data, not a general
+finding — content is shared across *all* patches, so a single visible patch already
+determines it. A dataset with partially-shared content would be needed for this axis to bite.
+
+**Predictor capacity trades nuisance for scale** (§8). The identity predictor keeps content
+(0.913) with far less nuisance (0.138) than the four-layer predictor (0.925 / 0.486): with
+nothing between context and target, the encoder must do the whole job and cannot offload
+invariance onto the predictor. Its representation shrinks to std 0.013 in the process — small,
+but not collapsed, which is exactly the case §5 warns about.
+
+**On the acceptance criterion.** What is predicted is each masked patch's *representation*,
+produced by an EMA target encoder under a stop-gradient; nothing in the loss refers to the
+observations. Trivial collapse is not prevented by the objective — the `jepa-none` row proves
+it, at std 0.0002 — and is prevented in practice by the stop-gradient denying the loss any
+route to move its own target. That is an empirical stabilizer and this track offers no
+argument that it always works.
 
 ## 10. Limitations
 
@@ -129,4 +219,12 @@ _Pending the full run._
 ## Appendix — every run
 
 <!-- generated:all_runs -->
+| model | metric | mean ± std | 95% CI | seeds | params | activated | train s |
+|---|---|---|---|---|---|---|---|
+| autoencoder | content_probe_r2 ↑ | 0.932 ± 0.00034 | [0.9317, 0.9322] | 5 | 12060 | - | 43.92 |
+| contrastive | content_probe_r2 ↑ | 0.8409 ± 0.012 | [0.8313, 0.8489] | 5 | 6032 | - | 72.33 |
+| jepa-ema | content_probe_r2 ↑ | 0.9198 ± 0.003 | [0.9173, 0.9219] | 5 | 12320 | - | 32.08 |
+| jepa-none | content_probe_r2 ↑ | 0.1526 ± 0.027 | [0.1342, 0.1756] | 5 | 12320 | - | 18.63 |
+| jepa-variance | content_probe_r2 ↑ | 0.4282 ± 0.023 | [0.4081, 0.4435] | 5 | 12320 | - | 29.19 |
+| raw-features | content_probe_r2 ↑ | 0.9331 ± 0 | [0.9331, 0.9331] | 5 | 0 | - | 0.03 |
 <!-- /generated:all_runs -->

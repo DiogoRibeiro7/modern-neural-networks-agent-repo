@@ -261,6 +261,33 @@ def test_the_probe_scores_zero_on_a_collapsed_representation() -> None:
     assert linear_probe(collapsed[:400], targets[:400], collapsed[400:], targets[400:]) < 0.1
 
 
+def test_the_probe_is_invariant_to_the_scale_of_the_representation() -> None:
+    """Scale is not information, and the identity-predictor ablation depends on this.
+
+    Without standardization the ridge penalty dominates a small-magnitude representation
+    and the probe reports lost information where none was lost.
+    """
+
+    torch.manual_seed(0)
+    base = torch.randn(600, 6)
+    targets = base @ torch.randn(6, 3)
+
+    scores = [
+        linear_probe((base * scale)[:400], targets[:400], (base * scale)[400:], targets[400:])
+        for scale in (1.0, 1e-2, 1e-4)
+    ]
+    assert all(score > 0.99 for score in scores), scores
+
+
+def test_standardization_does_not_rescue_a_genuinely_collapsed_representation() -> None:
+    """Otherwise scale invariance would have bought a false negative."""
+
+    torch.manual_seed(0)
+    noise = 1e-9 * torch.randn(600, 6)
+    targets = torch.randn(600, 3)
+    assert linear_probe(noise[:400], targets[:400], noise[400:], targets[400:]) < 0.1
+
+
 def test_the_probe_is_deterministic() -> None:
     """Closed form, so no probe seed can be tuned into a better-looking number."""
 

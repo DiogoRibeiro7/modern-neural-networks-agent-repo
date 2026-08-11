@@ -265,6 +265,44 @@ orthogonality test, which is unbiased and needs no bandwidth. Recorded here beca
 failure mode — a check that is less accurate than the thing it checks — is not specific to
 this track.
 
+### Track 11 — JEPA / Predictive Representation Learning
+
+| Field | Value |
+|---|---|
+| Primary source | **Not retrieved.** No paper was fetched or read in this environment for this track |
+| Formulation used | The joint-embedding predictive architecture described in the track prompt: a context encoder, an EMA target encoder under a stop-gradient, a predictor over masked patches, and a latent prediction loss |
+| Official repository | Not vendored and not invoked. No reference-integration claim is made |
+| Reference comparison | **None run.** No published JEPA number is reproduced or compared against |
+| Datasets | A synthetic patch dataset generated in-repo, with content and nuisance factors recorded. No external data |
+| Claim level | `research prototype` |
+
+**What is verified rather than assumed.** That the objective has a trivial solution — a
+constant encoder scores exactly zero loss — is asserted by test, and the `anti_collapse=none`
+variant is trained and reported so the collapse is demonstrated rather than described. The
+stop-gradient is checked structurally: the EMA target's parameters carry `requires_grad=False`
+and its outputs do not require grad, while the ablation's do. The EMA update is checked
+against its arithmetic.
+
+**What is deliberately not claimed.** The stop-gradient plus EMA target is an *empirical*
+stabilizer, not a proof that collapse cannot occur. The report says so and treats "collapse
+did not occur" as a measurement.
+
+**Two collapse-metric traps found in this track's own measurements**, both now pinned by
+tests and stated in the report:
+
+1. **Effective rank does not detect total collapse.** A constant encoder leaves only
+   floating-point noise, which is isotropic, so the rank reads *high* — measured at 0.86
+   normalized on the collapsed model, above the healthy model's 0.30, while its standard
+   deviation was 0.0002.
+2. **Variance does not detect collapse either, in the other direction.** A representation
+   scaled down by a constant has tiny variance and loses no information: the
+   identity-predictor ablation reads standard deviation 0.013 with a content probe of 0.91.
+
+The linear probe is therefore the definition and the two proxies are diagnostics. The probe
+standardizes features using training statistics, without which its ridge penalty makes it
+scale-sensitive too — a fully informative representation scaled by 1e-4 scores 0.004
+unstandardized and 1.000 standardized.
+
 ## Source verification checklist
 
 For every track, record:
