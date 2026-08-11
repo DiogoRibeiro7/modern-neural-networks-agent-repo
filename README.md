@@ -12,6 +12,17 @@ A research-oriented, reproducible implementation lab for modern neural-network a
 
 This repository is intentionally **scaffold-first**. It is designed for a coding/research agent to develop one architecture at a time under a shared experimental contract, so results remain comparable and claims remain auditable.
 
+**Status.** All eleven architecture tracks and the cross-track integration are complete: 987
+validated experiment records, every report regenerated from them, and a claim level on each
+track that the integration audit checked rather than assumed. Start with
+[`reports/cross_track_synthesis.md`](reports/cross_track_synthesis.md) for what the tracks
+established and where the evidence is thin, and [`ROADMAP.md`](ROADMAP.md) for what would
+change that.
+
+There is deliberately **no aggregate leaderboard**. The tracks measure accuracies, mean
+squared errors, energy distances and probe R-squareds on unrelated synthetic data; a mean of
+those would be arithmetic on incompatible units.
+
 ## Scope
 
 The initial roadmap covers eleven tracks:
