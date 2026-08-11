@@ -60,6 +60,7 @@ def get_track_suite(key: str) -> RunTrack:
         "relational": lambda: _module("relational"),
         "moe": lambda: _module("moe"),
         "flow": lambda: _module("flow"),
+        "jepa": lambda: _module("jepa"),
     }
     if key in loaders:
         return loaders[key]()

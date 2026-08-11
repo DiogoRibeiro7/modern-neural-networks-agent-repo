@@ -27,10 +27,10 @@ repository's claim boundaries.
 | Relational FM | 100% | 100% | 100% | 100% | 100% | complete (prototype) |
 | Sparse MoE | 100% | 100% | 100% | 100% | 100% | complete |
 | Flow Matching | 100% | 100% | 100% | 100% | 100% | complete |
-| JEPA | 0% | 0% | 0% | 0% | 0% | queued |
+| JEPA | 100% | 100% | 100% | 100% | 100% | complete (prototype) |
 
 Milestone **M0 (repository contracts)** is complete. Tracks 01 (KAN), 02 (xLSTM),
-03 (Mamba-3), 04 (TTT), 05 (Titans), 06 (Nested Learning), 07 (PFN), 08 (Relational), 09 (Sparse MoE), and 10 (Flow Matching) are complete end to end and establish the conventions every later track
+03 (Mamba-3), 04 (TTT), 05 (Titans), 06 (Nested Learning), 07 (PFN), 08 (Relational), 09 (Sparse MoE), 10 (Flow Matching), and 11 (JEPA) are complete end to end and establish the conventions every later track
 follows. Tracks 02 and 03 share task generation, so their records are directly comparable.
 
 Track 07 is complete for **deliverable A only**. Deliverable B — a benchmark of the
@@ -40,10 +40,11 @@ no TabPFN number appears anywhere in the repository.
 
 ## Next atomic milestone
 
-Track 11 (JEPA), then the final integration. JEPA's risk is representation collapse, which
-a reconstruction loss would make obvious but a latent-prediction loss hides: a constant
-encoder achieves zero loss. The track needs a collapse diagnostic that is independent of
-the training objective, or its headline number means nothing.
+The final integration (`prompts/12_final_integration.md`). All eleven architecture tracks
+are complete. The integration is a cross-track synthesis with config hashes, a comparison
+matrix, and a reproducibility audit; it **explicitly forbids a single aggregate
+leaderboard**, because the tracks measure different things on different data and ranking
+them against one another would manufacture a comparison none of the records support.
 
 ## Last verification
 
@@ -234,6 +235,25 @@ the training objective, or its headline number means nothing.
   deliberately-perturbed field to prove the check is not vacuous. **A verification must be
   more accurate than the thing it verifies.**
 
+**Track 11 — JEPA** (claim level: `research prototype`)
+
+- Added `tracks/jepa/` (`data`, `metrics`, `model`, `config`, `README`), the experiment
+  suite, and the report generator. 30 records plus a diagnostics artefact.
+- **The trivial solution is demonstrated, not described.** A constant encoder scores exactly
+  zero loss — asserted by test — and the `anti_collapse=none` variant is trained and
+  reported so the collapse appears in the results table.
+- **What prevents collapse is called an empirical stabilizer, not a proof.** The
+  stop-gradient plus EMA target is checked structurally, but "collapse did not occur" is
+  reported as a measurement.
+- 36 tests. The dataset's content/nuisance split is itself verified: one patch predicts
+  another's content but not its nuisance.
+- **No learned representation beats raw features on content** (0.932 against 0.933). What
+  separates the models is what they discard: the autoencoder retains the nuisance almost
+  exactly as the raw features do (0.794 against 0.796), because it is scored on
+  reconstructing it, while the JEPA halves it and the contrastive baseline all but removes
+  it. **The contrastive baseline wins the trade the track is about** (+0.839 against +0.489
+  on content minus nuisance), and the report says so.
+
 ### Corrected defects worth carrying forward
 
 The first version of the KAN suite trained every model at one shared learning rate. The
@@ -278,7 +298,7 @@ deliberately (seeded initialization) or report a single run honestly. Details in
   justification.
 - Adaptive grid updates are implemented and tested but excluded from the reported KAN
   training loop; they are listed as deviation 4 and as a next experiment.
-- One architecture track remains queued (JEPA) plus the final integration prompt.
+- All eleven architecture tracks are complete. The final integration prompt remains.
 - The relational track's GBDT baseline uses joins written with knowledge of what each regime
   depends on. That makes it strong and fair for these five regimes, but it flatters the
   flattening approach relative to a setting where nobody knows in advance which aggregate
@@ -311,6 +331,24 @@ deliberately (seeded initialization) or report a single run honestly. Details in
   architectures at this budget; it needs more data or a larger memory to be informative.
 - The xLSTM sLSTM variant is not width-matched to the mLSTM variant (8578 vs 4614
   parameters). The LSTM comparison resolves the confound for state tracking only.
+
+Two more, from Track 11, both about metrics rather than models. **Neither single-metric
+collapse proxy is reliable, and each fails in the opposite direction.** Effective rank reads
+*high* on a fully collapsed representation, because a constant encoder leaves only
+floating-point noise and that noise is isotropic — it scored above the healthy model. Variance
+reads *low* on a representation that was merely rescaled and lost nothing — the
+identity-predictor ablation sat an order of magnitude below any threshold while its probe was
+unaffected. Collapse detection now requires low variance **and** a failed probe. Chasing this
+also exposed that the probe itself was scale-sensitive through its ridge penalty; it now
+standardizes features, and the suite was re-run rather than mixing metrics computed two
+different ways.
+
+That fix then produced a third surprise: **the probe cannot detect collapse either.**
+Standardizing rescues the residual of a near-constant encoder, so the collapsed model scores
+0.153 rather than zero. Collapse is not binary and no single number decides it; the reported
+verdict requires near-zero scale *and* substantial information loss, with both thresholds
+stated in the table rather than left implicit. **A proxy for a property is not the property —
+and neither, always, is the definition when it is estimated.**
 
 A fourth defect, caught in Track 07 before any number was published: the cost measurement
 timed `fit_prior_cached`, which by that point in the suite was a warm cache. It reported the

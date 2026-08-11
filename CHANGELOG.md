@@ -12,6 +12,28 @@ experimental results, as defined in [`docs/claim_policy.md`](docs/claim_policy.m
 
 ### Added
 
+- **Track 11 — JEPA / predictive representation learning** (claim level: `research
+  prototype`): a context encoder, an EMA target encoder under a stop-gradient, a predictor
+  over masked patches, and two anti-collapse mechanisms compared against autoencoder,
+  contrastive, and raw-feature baselines; a synthetic dataset whose content factors are
+  shared across a sample's patches and whose nuisance factors are not, so "kept the content"
+  and "discarded the nuisance" are separate closed-form measurements rather than one
+  impression; 36 tests; and `reports/jepa.md`. The trivial solution is demonstrated rather
+  than described — a constant encoder scores exactly zero loss, and the no-anti-collapse
+  ablation is trained and reported.
+- Collapse detection in the JEPA track requires **low variance and a failed probe together**,
+  after both single-metric proxies were caught misclassifying real cases: effective rank
+  reads *high* on a fully collapsed representation because the residual floating-point noise
+  is isotropic, and variance reads *low* on a merely rescaled representation that lost no
+  information at all.
+
+### Changed
+
+- The JEPA linear probe standardizes features using training statistics, making it
+  invariant to representation scale. Without it the ridge penalty swamps a small-magnitude
+  representation and the probe reports lost information where none was lost — a fully
+  informative representation scaled by 1e-4 scored 0.004 rather than 1.000.
+
 - **Track 10 — Flow Matching** (claim level: `educational implementation`, downgraded from
   the registry's `compact reproduction` because no primary source was read): two affine
   probability paths with exact conditional velocities, a velocity network, Euler and midpoint

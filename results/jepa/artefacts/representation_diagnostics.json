@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "track": "jepa",
+  "measurement": "representation_diagnostics",
+  "note": "`content_r2` should be high and `nuisance_r2` low: the first says the representation kept what is shared across a sample's patches, the second that it discarded what varies between them. `normalized_effective_rank` near zero means collapse, and a collapsed representation also scores zero on both probes \u2014 so the probes alone cannot distinguish collapse from a merely uninformative representation, which is why the rank is reported beside them.",
+  "representation_width": 16,
+  "masking_sweep": [
+    {
+      "n_targets": 1,
+      "context_patches": 7,
+      "mask_fraction": 0.125,
+      "content_r2": 0.914395272731781,
+      "nuisance_r2": 0.27818042039871216,
+      "content_minus_nuisance": 0.6362148523330688,
+      "representation_std": 0.3904872536659241,
+      "effective_rank": 4.216669082641602,
+      "normalized_effective_rank": 0.2635418176651001
+    },
+    {
+      "n_targets": 2,
+      "context_patches": 6,
+      "mask_fraction": 0.25,
+      "content_r2": 0.9163382053375244,
+      "nuisance_r2": 0.4451219439506531,
+      "content_minus_nuisance": 0.47121626138687134,
+      "representation_std": 0.42060530185699463,
+      "effective_rank": 4.602890491485596,
+      "normalized_effective_rank": 0.28768065571784973
+    },
+    {
+      "n_targets": 4,
+      "context_patches": 4,
+      "mask_fraction": 0.5,
+      "content_r2": 0.9187678694725037,
+      "nuisance_r2": 0.41648000478744507,
+      "content_minus_nuisance": 0.5022878646850586,
+      "representation_std": 0.4844999611377716,
+      "effective_rank": 4.673962593078613,
+      "normalized_effective_rank": 0.29212266206741333
+    },
+    {
+      "n_targets": 6,
+      "context_patches": 2,
+      "mask_fraction": 0.75,
+      "content_r2": 0.9275131225585938,
+      "nuisance_r2": 0.4642946720123291,
+      "content_minus_nuisance": 0.46321845054626465,
+      "representation_std": 0.5486871004104614,
+      "effective_rank": 4.414225101470947,
+      "normalized_effective_rank": 0.2758890688419342
+    },
+    {
+      "n_targets": 7,
+      "context_patches": 1,
+      "mask_fraction": 0.875,
+      "content_r2": 0.9188181161880493,
+      "nuisance_r2": 0.23746854066848755,
+      "content_minus_nuisance": 0.6813495755195618,
+      "representation_std": 0.4808693528175354,
+      "effective_rank": 4.0054731369018555,
+      "normalized_effective_rank": 0.25034207105636597
+    }
+  ],
+  "predictor_sweep": [
+    {
+      "predictor_layers": 0,
+      "identity_predictor": true,
+      "content_r2": 0.9132072329521179,
+      "nuisance_r2": 0.1381862759590149,
+      "content_minus_nuisance": 0.775020956993103,
+      "representation_std": 0.01305343396961689,
+      "effective_rank": 3.255156993865967,
+      "normalized_effective_rank": 0.20344731211662292
+    },
+    {
+      "predictor_layers": 1,
+      "identity_predictor": false,
+      "content_r2": 0.9069676995277405,
+      "nuisance_r2": 0.23270612955093384,
+      "content_minus_nuisance": 0.6742615699768066,
+      "representation_std": 0.537798285484314,
+      "effective_rank": 5.7680230140686035,
+      "normalized_effective_rank": 0.3605014383792877
+    },
+    {
+      "predictor_layers": 2,
+      "identity_predictor": false,
+      "content_r2": 0.9187678694725037,
+      "nuisance_r2": 0.41648000478744507,
+      "content_minus_nuisance": 0.5022878646850586,
+      "representation_std": 0.4844999611377716,
+      "effective_rank": 4.673962593078613,
+      "normalized_effective_rank": 0.29212266206741333
+    },
+    {
+      "predictor_layers": 4,
+      "identity_predictor": false,
+      "content_r2": 0.925243079662323,
+      "nuisance_r2": 0.4857540726661682,
+      "content_minus_nuisance": 0.4394890069961548,
+      "representation_std": 0.38418757915496826,
+      "effective_rank": 4.543686389923096,
+      "normalized_effective_rank": 0.2839803993701935
+    }
+  ]
+}
