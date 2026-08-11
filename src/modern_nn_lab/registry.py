@@ -120,6 +120,7 @@ TRACKS: tuple[TrackSpec, ...] = (
         "representation",
         "Should models predict representations rather than observations?",
         "research prototype",
+        "complete",
     ),
 )
 

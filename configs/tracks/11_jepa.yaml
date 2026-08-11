@@ -1,10 +1,64 @@
 track: 11_jepa
-model: jepa_compact
-task: representation_prediction
+model: joint_embedding_predictive_architecture
+task: masked_patch_representation_prediction
+claim_level: research prototype
+
+implements: [context-encoder, ema-target-encoder, predictor, mask-sampling,
+             anti-collapse-stopgrad, anti-collapse-variance-hinge, linear-probe-evaluation]
+not_implemented: [vision-transformer-backbone, multi-block-masking, world-model-rollouts,
+                  pretrained-checkpoint]
+
 seed: 1729
+seeds: [0, 1, 2, 3, 4]
+data_seed: 1729          # one dataset, shared by every model and every seed
+
+# Data. Content is shared across a sample's patches; nuisance is drawn per patch. That
+# asymmetry is the design: content is exactly the part one patch can predict of another.
+n_samples: 4000
+n_patches: 8
+d_patch: 12
+d_content: 4
+d_nuisance: 3
+noise: 0.05
+
+# Architecture.
+d_hidden: 64
+d_representation: 16
+n_encoder_layers: 2
+d_predictor: 64
+n_predictor_layers: 2
+
+# Anti-collapse.
+anti_collapse: ema       # ema | variance | none  (none is the ablation that collapses)
+ema_decay: 0.99
+variance_weight: 1.0
+variance_floor: 1.0
+
+# Required analyses.
+n_targets: 4
+mask_sweep: [1, 2, 4, 6, 7]
+predictor_sweep: [0, 1, 2, 4]     # 0 is the identity predictor
+
+# Training.
+steps: 1500
 batch_size: 128
-epochs: 100
-learning_rate: 0.001
-parameter_budget: null
+learning_rate: 0.003
+
+baselines: [autoencoder, contrastive, raw-features]
+temperature: 0.1                  # InfoNCE, contrastive baseline only
+
+parameter_budget: shared-encoder   # every learned model uses the same encoder shape
 compute_budget: null
-notes: "Scaffold configuration; tune only after the baseline is established."
+notes: >-
+  The objective has a trivial solution: a constant encoder makes every prediction exact and
+  the loss zero. A test asserts this, and the anti_collapse=none variant is trained and
+  reported so the collapse is shown rather than described. What prevents it is a
+  stop-gradient paired with an EMA target encoder - an empirical stabilizer, NOT a proof, so
+  "collapse did not occur" is reported as a measurement.
+  COLLAPSE METRIC WARNING: effective rank does NOT detect total collapse. A constant encoder
+  leaves only floating-point noise, which is isotropic, so the rank reads high - measured at
+  ~0.75 normalized while the standard deviation was 0.001. Variance and rank are always
+  reported together, standard deviation first.
+  Every reported quantity is a property of the representation on held-out data and appears
+  in no training objective; the probes are closed-form ridge regressions, so no probe seed
+  or learning rate can be tuned into a better-looking result.
