@@ -12,6 +12,15 @@ experimental results, as defined in [`docs/claim_policy.md`](docs/claim_policy.m
 
 ### Added
 
+- **Track 10 — Flow Matching** (claim level: `educational implementation`, downgraded from
+  the registry's `compact reproduction` because no primary source was read): two affine
+  probability paths with exact conditional velocities, a velocity network, Euler and midpoint
+  ODE sampling with field-evaluation counting, and three two-dimensional targets scored by
+  energy distance against a sampling-noise floor. The acceptance criterion — separating
+  vector-field approximation error from ODE discretization error — is met via a closed-form
+  marginal velocity field for Gaussian endpoints, so each error is measured with the other
+  held at zero. 40 tests, including measured solver convergence orders. `reports/flow.md`.
+
 - **Track 09 — Sparse Mixture of Experts** (claim level: `educational implementation`): a
   top-k router with explicit capacity and dropping, a dense-ensemble reference, a dense
   feed-forward baseline, and ablations for top-k, capacity, and the balancing loss; every

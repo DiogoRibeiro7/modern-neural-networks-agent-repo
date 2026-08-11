@@ -239,6 +239,32 @@ towards uniform routing, which is the opposite of specialization. This is the ex
 for the track's headline result and is pinned by a test. It is a property of this
 implementation's default, not a claim about any published system.
 
+### Track 10 — Flow Matching
+
+| Field | Value |
+|---|---|
+| Primary source | **Not retrieved.** No paper was fetched or read in this environment for this track |
+| Formulation used | Conditional flow matching as specified in the track prompt: an affine probability path, its conditional velocity as the regression target, and ODE sampling. Every equation used is derived and checked in-repo rather than transcribed |
+| Official repository | Not vendored and not invoked. No reference-integration claim is made |
+| Reference comparison | **None run.** No published flow-matching number is reproduced or compared against |
+| Datasets | Three two-dimensional distributions generated in-repo. No external data |
+| Claim level | `educational implementation` — **downgraded from the registry's original `compact reproduction`**, because that level requires fidelity to a paper experiment and no paper was read |
+
+**What is verified rather than assumed.** The closed-form marginal velocity field for
+Gaussian endpoints is checked two independent ways: against the defining orthogonality
+property of a conditional expectation, and by integrating it to confirm it transports the
+source onto the target. A third test perturbs the field by 10% and asserts the orthogonality
+check rejects it, so the check cannot pass vacuously. Solver convergence orders are measured
+against an exact ODE solution rather than asserted.
+
+**A verification that was itself wrong.** The first version of the marginal-field check
+estimated the conditional expectation with a narrow Gaussian kernel and reported a large
+disagreement against a field that is in fact correct: at any bandwidth wide enough to contain
+samples, the estimator's bias exceeds the quantity being verified. It was replaced by the
+orthogonality test, which is unbiased and needs no bandwidth. Recorded here because the
+failure mode — a check that is less accurate than the thing it checks — is not specific to
+this track.
+
 ## Source verification checklist
 
 For every track, record:
