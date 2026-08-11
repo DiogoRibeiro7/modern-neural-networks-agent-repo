@@ -10,7 +10,6 @@ less than it appears to.
 What *is* verified:
 
 - every committed record parses and validates against the current schema;
-- every report regenerates byte-for-byte from those records;
 - the experiment index rebuilds and its configuration hashes are stable across rebuilds;
 - a fresh interpreter can import the package and enumerate every track;
 - each track's experiment suite is importable and exposes a ``run`` entry point.
@@ -91,6 +90,10 @@ def main() -> int:
         ``0`` when every required step passed.
     """
 
+    # Report regeneration is deliberately NOT a step here. It is verified by
+    # `verify_reports_regenerate.py`, which the quality gate runs, and folding it in would
+    # make this audit circular: writing this file's result changes the synthesis report,
+    # which would then fail a cleanliness check performed by the same run.
     print("Reproducibility audit")
     steps: list[dict[str, Any]] = [
         run_step(
@@ -100,10 +103,6 @@ def main() -> int:
         run_step(
             "scaffold is complete for every track",
             [sys.executable, str(ROOT / "scripts" / "validate_scaffold.py")],
-        ),
-        run_step(
-            "every report regenerates from the records",
-            [sys.executable, str(ROOT / "scripts" / "verify_reports_regenerate.py")],
         ),
         hash_stability(),
         run_step(
@@ -167,9 +166,12 @@ def main() -> int:
         "steps": steps,
         "unverified": unverified,
         "note": (
-            "A passing audit here means the committed artefacts are internally consistent: "
-            "records validate, reports derive from them, and hashes are stable. It does NOT "
-            "mean the numbers were reproduced from scratch — see `unverified`."
+            "A passing audit means the committed artefacts are internally consistent: "
+            "records validate, the scaffold is complete, and configuration hashes are "
+            "stable. It does NOT mean the numbers were reproduced from scratch — see "
+            "`unverified`. Report regeneration is checked separately by "
+            "`scripts/verify_reports_regenerate.py`; including it here would be circular, "
+            "since writing this file changes the report that summarizes it."
         ),
     }
     DESTINATION.parent.mkdir(parents=True, exist_ok=True)

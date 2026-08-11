@@ -66,6 +66,7 @@ def main() -> int:
         "evidence": _evidence_table(index),
         "claims": _claim_audit(index),
         "profiling": _profiling_coverage(),
+        "audit": _audit_table(),
     }
 
     replaced = inject(REPORT, blocks)
@@ -174,6 +175,30 @@ def _profiling_coverage() -> str:
         "them in its own configuration instead, which is a real inconsistency rather than a "
         "hardware limit. `activated` is blank where conditional computation does not apply._"
     )
+    return NEWLINE.join(lines)
+
+
+def _audit_table() -> str:
+    """Render the reproducibility audit, including what it could not establish."""
+
+    source = RESULTS / "artefacts" / "reproducibility_audit.json"
+    if not source.exists():
+        return "_No audit recorded. Run `python scripts/reproducibility_audit.py`._"
+
+    payload = json.loads(source.read_text(encoding="utf-8"))
+    lines = ["| check | outcome |", "|---|---|"]
+    for step in payload["steps"]:
+        lines.append(f"| {step['step']} | {'pass' if step['passed'] else '**fail**'} |")
+    for step in payload["unverified"]:
+        lines.append(f"| {step['step']} | **not verified** |")
+
+    lines.append("")
+    lines.append(f"_{payload['note']}_")
+    lines.append("")
+    lines.append("Why the unverified steps could not be run:")
+    lines.append("")
+    for step in payload["unverified"]:
+        lines.append(f"- **{step['step']}** — {step['reason']}")
     return NEWLINE.join(lines)
 
 

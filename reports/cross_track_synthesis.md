@@ -20,6 +20,21 @@ and where the evidence is thin.
 ## 2. Evidence gathered
 
 <!-- generated:evidence -->
+| # | track | records | groups | metrics measured | claim level |
+|---|---|---|---|---|---|
+| 01 | Kolmogorov-Arnold Networks | 90 | 22 | `test_mse` | `educational implementation` |
+| 02 | xLSTM | 108 | 24 | `test_accuracy` | `educational implementation` |
+| 03 | Mamba-3 / SSMs | 105 | 21 | `test_accuracy` | `educational implementation` |
+| 04 | Test-Time Training | 79 | 17 | `test_accuracy`, `test_accuracy_post_shift` | `educational implementation` |
+| 05 | Titans-style Neural Memory | 60 | 12 | `test_accuracy` | `educational implementation` |
+| 06 | Nested Learning / Hope | 50 | 10 | `test_mse_all_tasks` | `research prototype` |
+| 07 | Prior-Fitted Networks / TabPFN | 250 | 50 | `query_accuracy` | `research prototype` |
+| 08 | Relational Foundation Models | 150 | 30 | `test_accuracy` | `research prototype` |
+| 09 | Sparse Mixture of Experts | 35 | 7 | `test_mse` | `research prototype` |
+| 10 | Flow Matching | 30 | 6 | `energy_distance` | `research prototype` |
+| 11 | JEPA / World Models | 30 | 6 | `content_probe_r2` | `research prototype` |
+
+_987 records in 205 configuration groups, each carrying an immutable configuration hash in `results/artefacts/experiment_index.json`. The metric column is why there is no aggregate score: these quantities are not commensurable._
 <!-- /generated:evidence -->
 
 ## 3. Claim-level audit
@@ -40,6 +55,21 @@ specification without a primary source, and the precondition in `educational imp
 is now stated explicitly rather than left as an adjective.
 
 <!-- generated:claims -->
+| track | primary source read | claim level | verdict |
+|---|---|---|---|
+| Kolmogorov-Arnold Networks | yes | `educational implementation` | supported |
+| xLSTM | yes | `educational implementation` | supported |
+| Mamba-3 / SSMs | yes | `educational implementation` | supported |
+| Test-Time Training | yes | `educational implementation` | supported |
+| Titans-style Neural Memory | yes | `educational implementation` | supported |
+| Nested Learning / Hope | yes | `research prototype` | supported |
+| Prior-Fitted Networks / TabPFN | no | `research prototype` | supported |
+| Relational Foundation Models | no | `research prototype` | supported |
+| Sparse Mixture of Experts | no | `research prototype` | supported |
+| Flow Matching | no | `research prototype` | supported |
+| JEPA / World Models | no | `research prototype` | supported |
+
+_Every claim level is supported by the evidence actually gathered. Five tracks sit at `research prototype` because no primary source was read for them; three of those were downgraded by this audit from `educational implementation`, which the policy defines as requiring implementation from primary sources._
 <!-- /generated:claims -->
 
 ## 4. Comparison matrix
@@ -66,6 +96,21 @@ strengths and failures columns can bear.
 ## 5. Profiling coverage, and what is missing
 
 <!-- generated:profiling -->
+| track | records | params | activated | wall clock | throughput | peak mem |
+|---|---|---|---|---|---|---|
+| kan | 90 | all | 80/90 | all | 80/90 | **none** |
+| xlstm | 108 | all | all | all | all | **none** |
+| mamba3 | 105 | all | all | all | all | **none** |
+| ttt | 79 | all | all | all | all | **none** |
+| titans | 60 | all | all | all | all | **none** |
+| hope | 50 | **none** | **none** | all | **none** | **none** |
+| pfn | 250 | 50/250 | **none** | all | **none** | **none** |
+| relational | 150 | 125/150 | 125/150 | all | 125/150 | **none** |
+| moe | 35 | all | all | all | all | **none** |
+| flow | 30 | all | **none** | all | **none** | **none** |
+| jepa | 30 | 25/30 | **none** | all | **none** | **none** |
+
+_**Peak memory is unpopulated everywhere**, and that is a deliberate refusal rather than an oversight: `profiling.peak_memory` measures only on CUDA and returns `None` on CPU instead of a misleading number. Every run in this repository was on CPU, so the field is empty by construction. The `flops_per_sample` schema field is likewise unpopulated everywhere; the one track with analytic FLOP counts (Sparse MoE) stores them in its own configuration instead, which is a real inconsistency rather than a hardware limit. `activated` is blank where conditional computation does not apply._
 <!-- /generated:profiling -->
 
 **Throughput numbers across tracks are not comparable, and within a track are barely
@@ -138,6 +183,22 @@ These are the reasons this repository is a set of prototypes rather than a study
 ## 8. Reproducibility audit
 
 <!-- generated:audit -->
+| check | outcome |
+|---|---|
+| every record validates against the schema | pass |
+| scaffold is complete for every track | pass |
+| configuration hashes stable across rebuilds | pass |
+| package imports in a fresh interpreter and lists every track | pass |
+| every track exposes a runnable experiment suite | pass |
+| clean dependency resolution via `poetry install` | **not verified** |
+| results reproduced by re-running every suite end to end | **not verified** |
+
+_A passing audit means the committed artefacts are internally consistent: records validate, the scaffold is complete, and configuration hashes are stable. It does NOT mean the numbers were reproduced from scratch — see `unverified`. Report regeneration is checked separately by `scripts/verify_reports_regenerate.py`; including it here would be circular, since writing this file changes the report that summarizes it._
+
+Why the unverified steps could not be run:
+
+- **clean dependency resolution via `poetry install`** — Fails on this Windows host because of path-length limits while unpacking Torch metadata. The quality gate is executed with the interpreter's installed toolchain instead, which runs the identical commands CI runs through Poetry — but a genuinely fresh resolution was never exercised here. CI does exercise it on Linux across Python 3.11-3.13.
+- **results reproduced by re-running every suite end to end** — Not attempted. Several suites take 20-30 minutes each on this machine, and re-running all eleven would take hours. Determinism is exercised per track by seeded tests instead, which is weaker: it checks that a run repeats, not that the committed records are what a rerun produces today.
 <!-- /generated:audit -->
 
 ## 9. How to check any claim in this repository
