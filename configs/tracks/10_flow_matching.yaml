@@ -1,10 +1,60 @@
 track: 10_flow_matching
-model: flow_matching
-task: two_moons_generation
+model: conditional_flow_matching
+task: two_dimensional_density_transport
+claim_level: educational implementation
+# Downgraded from `compact reproduction` when the track was built: no primary source was
+# read, so there is no paper experiment to be faithful to.
+
+implements: [probability-path-abstraction, conditional-vector-field, velocity-network,
+             flow-matching-objective, ode-sampling, trajectory-diagnostics,
+             error-source-separation]
+not_implemented: [high-dimensional-model, adaptive-step-solver, stochastic-interpolants,
+                  minibatch-optimal-transport-coupling]
+
 seed: 1729
+seeds: [0, 1, 2, 3, 4]
+data_seed: 1729
+
+# Probability paths. Both are affine in the endpoints: x_t = alpha_t x1 + sigma_t x0,
+# so the conditional velocity is exactly alpha_dot x1 + sigma_dot x0.
+paths: [linear, trigonometric]
+# linear:        alpha = t,            sigma = 1 - t          (optimal-transport style)
+# trigonometric: alpha = sin(pi t/2),  sigma = cos(pi t/2)    (variance preserving)
+
+# Targets.
+datasets: [gaussian, moons, mixture]
+gaussian_mean: 2.0      # the only target with a closed-form marginal velocity field
+gaussian_scale: 0.5
+
+# Architecture.
+dim: 2
+d_hidden: 128
+n_layers: 3
+n_frequencies: 6        # Fourier features of time, fixed rather than learned
+
+# Training.
+steps: 3000
 batch_size: 256
-epochs: 200
-learning_rate: 0.001
-parameter_budget: null
+learning_rate: 0.003
+
+# Sampling and evaluation.
+n_eval: 2048
+solver_steps: [2, 4, 8, 16, 32, 64, 128]
+eval_method: midpoint
+solvers: [euler, midpoint]      # global error O(h) and O(h^2), orders measured in tests
+
+metric: energy_distance         # not the training objective, and has no free parameter
+parameter_budget: identical     # one network shape for every path and target
 compute_budget: null
-notes: "Scaffold configuration; tune only after the baseline is established."
+notes: >-
+  The acceptance criterion is to separate vector-field approximation error from ODE
+  discretization error, and sample quality alone cannot do it: a poor sample set is equally
+  consistent with a badly learned field and with too few solver steps. The Gaussian target
+  has a closed-form marginal velocity field, so discretization error is measured by
+  integrating the EXACT field (model contributes nothing) and approximation error by
+  comparing the learned field to the exact one pointwise (no solver involved). The moons
+  and mixture targets have no closed form and are reported on sample quality alone - for
+  those the two error sources are NOT separated. Every energy distance is reported beside
+  the distance between two independent draws from the target, which is the floor no method
+  can beat. Solvers are compared at equal field evaluations, not equal steps, because a
+  midpoint step costs two.

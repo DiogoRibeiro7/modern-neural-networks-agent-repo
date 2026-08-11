@@ -109,7 +109,10 @@ TRACKS: tuple[TrackSpec, ...] = (
         "Flow Matching",
         "generative",
         "Can generation be learned as vector-field regression?",
-        "compact reproduction",
+        # Downgraded from `compact reproduction` when the track was built: no primary
+        # source was read, so there is no paper experiment to be faithful to.
+        "educational implementation",
+        "complete",
     ),
     TrackSpec(
         "jepa",

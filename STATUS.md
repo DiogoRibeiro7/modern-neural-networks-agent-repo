@@ -26,11 +26,11 @@ repository's claim boundaries.
 | PFN / TabPFN | 100% | 100% | 100% | 100% | 100% | complete (deliverable A) |
 | Relational FM | 100% | 100% | 100% | 100% | 100% | complete (prototype) |
 | Sparse MoE | 100% | 100% | 100% | 100% | 100% | complete |
-| Flow Matching | 0% | 0% | 0% | 0% | 0% | queued |
+| Flow Matching | 100% | 100% | 100% | 100% | 100% | complete |
 | JEPA | 0% | 0% | 0% | 0% | 0% | queued |
 
 Milestone **M0 (repository contracts)** is complete. Tracks 01 (KAN), 02 (xLSTM),
-03 (Mamba-3), 04 (TTT), 05 (Titans), 06 (Nested Learning), 07 (PFN), 08 (Relational), and 09 (Sparse MoE) are complete end to end and establish the conventions every later track
+03 (Mamba-3), 04 (TTT), 05 (Titans), 06 (Nested Learning), 07 (PFN), 08 (Relational), 09 (Sparse MoE), and 10 (Flow Matching) are complete end to end and establish the conventions every later track
 follows. Tracks 02 and 03 share task generation, so their records are directly comparable.
 
 Track 07 is complete for **deliverable A only**. Deliverable B — a benchmark of the
@@ -40,10 +40,10 @@ no TabPFN number appears anywhere in the repository.
 
 ## Next atomic milestone
 
-Track 10 (Flow Matching). The prompt asks for a 2D density-recovery diagnostic, so the
-evaluation question is the hard part: sample quality on a known density needs a distance
-that is not the training objective, or the report measures how well the model minimized
-its own loss.
+Track 11 (JEPA), then the final integration. JEPA's risk is representation collapse, which
+a reconstruction loss would make obvious but a latent-prediction loss hides: a constant
+encoder achieves zero loss. The track needs a collapse diagnostic that is independent of
+the training objective, or its headline number means nothing.
 
 ## Last verification
 
@@ -215,6 +215,25 @@ its own loss.
   the balance is the capacity ceiling binding, not good routing. Read alone, that column
   would have misled.
 
+**Track 10 — Flow Matching** (claim level: `educational implementation`)
+
+- Added `tracks/flow/` (`paths`, `analytic`, `field`, `solver`, `data`, `README`), the
+  experiment suite, and the report generator. 30 records plus a diagnostics artefact.
+- **The claim level was downgraded from `compact reproduction`**, which the registry had
+  declared. That level requires fidelity to a paper experiment and no paper was read.
+- **The acceptance criterion is met by construction.** The Gaussian target has a closed-form
+  marginal velocity field, so discretization error is measured by integrating the exact
+  field and approximation error by comparing the learned field to it pointwise. The field
+  RMSE is constant across every step count, which is the check that the separation is real.
+- 40 tests. Solver convergence orders are *measured* (1 for Euler, 2 for midpoint), so a
+  method that had silently degraded would fail rather than merely underperform.
+- **A verification that was itself wrong**, caught before publishing: the first
+  marginal-field check used a narrow-bandwidth kernel estimator whose bias exceeded the
+  quantity being verified, and it reported a large disagreement against a correct field. It
+  was replaced by an unbiased test of the defining orthogonality property, plus a
+  deliberately-perturbed field to prove the check is not vacuous. **A verification must be
+  more accurate than the thing it verifies.**
+
 ### Corrected defects worth carrying forward
 
 The first version of the KAN suite trained every model at one shared learning rate. The
@@ -259,8 +278,7 @@ deliberately (seeded initialization) or report a single run honestly. Details in
   justification.
 - Adaptive grid updates are implemented and tested but excluded from the reported KAN
   training loop; they are listed as deviation 4 and as a next experiment.
-- Two architecture tracks remain queued (Flow Matching, JEPA) plus the final integration
-  prompt.
+- One architecture track remains queued (JEPA) plus the final integration prompt.
 - The relational track's GBDT baseline uses joins written with knowledge of what each regime
   depends on. That makes it strong and fair for these five regimes, but it flatters the
   flattening approach relative to a setting where nobody knows in advance which aggregate
