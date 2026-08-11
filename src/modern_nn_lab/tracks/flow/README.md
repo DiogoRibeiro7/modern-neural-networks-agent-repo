@@ -1,9 +1,10 @@
 # Flow Matching
 
-**Claim level: educational implementation.** Continuous flow matching built from first
-principles on two-dimensional distributions. The track registry originally declared
-`compact reproduction`; it was downgraded when the track was built, because no primary
-source was read and there is therefore no paper experiment to be faithful to.
+**Claim level: research prototype.** Continuous flow matching built from first principles on
+two-dimensional distributions. The label was downgraded twice: from `compact reproduction`
+when the track was built, then from `educational implementation` by the final-integration
+claim audit — that level also requires implementation from primary sources, and none was
+read.
 
 ## The idea
 

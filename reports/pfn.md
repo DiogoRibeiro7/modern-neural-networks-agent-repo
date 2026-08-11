@@ -5,7 +5,12 @@
 
 ## 1. Claim level
 
-**`educational implementation`** — see [`docs/claim_policy.md`](../docs/claim_policy.md).
+**`research prototype`** — see [`docs/claim_policy.md`](../docs/claim_policy.md).
+
+**Downgraded from `educational implementation` by the final-integration claim audit.** That
+level requires the mechanism to be implemented *from primary sources*, and no primary source
+was read for this track (§2). The implementation and its tests are unchanged; the label was
+overstated.
 
 A compact Prior-Fitted Network built from first principles and fitted to a controllable
 synthetic prior. What is **not** claimed: any reproduction of TabPFN's published results,

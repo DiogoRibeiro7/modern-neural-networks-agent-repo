@@ -1,6 +1,6 @@
 # Sparse Mixture of Experts
 
-**Claim level: educational implementation.** Sparse conditional computation with a
+**Claim level: research prototype.** (Downgraded from `educational implementation` by the final-integration claim audit: that level requires primary sources, and none was read.) Sparse conditional computation with a
 transparent router, compared against a dense ensemble reference and a dense feed-forward
 baseline on a synthetic mixture-of-functions task.
 

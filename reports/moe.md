@@ -5,7 +5,11 @@
 
 ## 1. Claim level
 
-**`educational implementation`** — see [`docs/claim_policy.md`](../docs/claim_policy.md).
+**`research prototype`** — see [`docs/claim_policy.md`](../docs/claim_policy.md).
+
+**Downgraded from `educational implementation` by the final-integration claim audit.** That
+level requires implementation *from primary sources*, and no primary source was read for this
+track (§2). Nothing about the implementation or its results changed; the label was overstated.
 
 Sparse conditional computation with a transparent router, compared against a dense ensemble
 reference and a dense feed-forward baseline. What is **not** claimed: any reproduction of a

@@ -1,6 +1,6 @@
 # Prior-Fitted Networks
 
-**Claim level: educational implementation.** A compact PFN built from first principles,
+**Claim level: research prototype.** (Downgraded from `educational implementation` by the final-integration claim audit: that level requires primary sources, and none was read.) A compact PFN built from first principles,
 plus an unexecuted adapter for the official TabPFN checkpoint. This is not a reproduction
 of TabPFN's reported numbers and does not attempt to be one.
 

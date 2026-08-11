@@ -5,13 +5,14 @@
 
 ## 1. Claim level
 
-**`educational implementation`** — see [`docs/claim_policy.md`](../docs/claim_policy.md).
+**`research prototype`** — see [`docs/claim_policy.md`](../docs/claim_policy.md).
 
-The track registry originally declared `compact reproduction`. That level requires being
-faithful enough to reproduce a small paper experiment, and **no primary source was read for
-this track**, so there is no paper experiment to be faithful to. It was downgraded when the
-track was built, and the downgrade is recorded in the registry, the config, and the package
-README rather than left implicit.
+**This label has been downgraded twice.** The registry originally declared `compact
+reproduction`; that was lowered to `educational implementation` when the track was built,
+because no primary source was read and there is no paper experiment to be faithful to. The
+final-integration claim audit then lowered it again: `educational implementation` *also*
+requires implementation from primary sources, so it was still unsupported. The implementation
+never changed — only the honesty of the label.
 
 What is **not** claimed: any reproduction of a published flow-matching result, any statement
 about one, or anything at all about behaviour above two dimensions.
