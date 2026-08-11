@@ -1,7 +1,9 @@
 track: 07_tabpfn
 model: prior_fitted_network
 task: in_context_tabular_classification
-claim_level: educational implementation
+claim_level: research prototype
+# Downgraded from `educational implementation` by the final-integration claim audit:
+# that level requires implementation from primary sources, and none was read.
 
 # Deliverable A (from-scratch PFN) is implemented and executed. Deliverable B (the
 # official TabPFN checkpoint) is NOT executed: TabPFN 8.x gates its checkpoint behind

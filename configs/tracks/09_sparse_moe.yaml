@@ -1,7 +1,9 @@
 track: 09_sparse_moe
 model: sparse_mixture_of_experts
 task: mixture_of_functions_regression
-claim_level: educational implementation
+claim_level: research prototype
+# Downgraded from `educational implementation` by the final-integration claim audit:
+# that level requires implementation from primary sources, and none was read.
 
 implements: [dense-expert-reference, top-k-router, dispatch-combine, capacity-handling,
              load-balancing-loss, routing-diagnostics]

@@ -1,9 +1,10 @@
 track: 10_flow_matching
 model: conditional_flow_matching
 task: two_dimensional_density_transport
-claim_level: educational implementation
-# Downgraded from `compact reproduction` when the track was built: no primary source was
-# read, so there is no paper experiment to be faithful to.
+claim_level: research prototype
+# Downgraded twice: from `compact reproduction` when the track was built, then to
+# `research prototype` by the final-integration claim audit. `educational implementation`
+# requires implementation from primary sources, and none was read.
 
 implements: [probability-path-abstraction, conditional-vector-field, velocity-network,
              flow-matching-objective, ode-sampling, trajectory-diagnostics,

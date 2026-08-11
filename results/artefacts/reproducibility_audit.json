@@ -1,0 +1,56 @@
+{
+  "audit": "reproducibility",
+  "n_steps": 5,
+  "n_failed": 0,
+  "steps": [
+    {
+      "step": "every record validates against the schema",
+      "command": "C:\\Python313\\python.exe C:\\Users\\diogo\\work_code\\modern-neural-networks-agent-repo\\scripts\\validate_results.py",
+      "passed": true,
+      "required": true,
+      "returncode": 0
+    },
+    {
+      "step": "scaffold is complete for every track",
+      "command": "C:\\Python313\\python.exe C:\\Users\\diogo\\work_code\\modern-neural-networks-agent-repo\\scripts\\validate_scaffold.py",
+      "passed": true,
+      "required": true,
+      "returncode": 0
+    },
+    {
+      "step": "configuration hashes stable across rebuilds",
+      "passed": true,
+      "required": true,
+      "n_hashes": 205
+    },
+    {
+      "step": "package imports in a fresh interpreter and lists every track",
+      "command": "C:\\Python313\\python.exe -c import sys; sys.path.insert(0, 'src'); from modern_nn_lab.registry import TRACKS; assert len(TRACKS) == 11, len(TRACKS); assert all(t.status == 'complete' for t in TRACKS)",
+      "passed": true,
+      "required": true,
+      "returncode": 0
+    },
+    {
+      "step": "every track exposes a runnable experiment suite",
+      "command": "C:\\Python313\\python.exe -c import sys; sys.path.insert(0, 'src'); from modern_nn_lab.registry import TRACKS; from modern_nn_lab.experiments.tracks import get_track_suite; [get_track_suite(t.key) for t in TRACKS]",
+      "passed": true,
+      "required": true,
+      "returncode": 0
+    }
+  ],
+  "unverified": [
+    {
+      "step": "clean dependency resolution via `poetry install`",
+      "passed": null,
+      "required": false,
+      "reason": "Fails on this Windows host because of path-length limits while unpacking Torch metadata. The quality gate is executed with the interpreter's installed toolchain instead, which runs the identical commands CI runs through Poetry \u2014 but a genuinely fresh resolution was never exercised here. CI does exercise it on Linux across Python 3.11-3.13."
+    },
+    {
+      "step": "results reproduced by re-running every suite end to end",
+      "passed": null,
+      "required": false,
+      "reason": "Not attempted. Several suites take 20-30 minutes each on this machine, and re-running all eleven would take hours. Determinism is exercised per track by seeded tests instead, which is weaker: it checks that a run repeats, not that the committed records are what a rerun produces today."
+    }
+  ],
+  "note": "A passing audit means the committed artefacts are internally consistent: records validate, the scaffold is complete, and configuration hashes are stable. It does NOT mean the numbers were reproduced from scratch \u2014 see `unverified`. Report regeneration is checked separately by `scripts/verify_reports_regenerate.py`; including it here would be circular, since writing this file changes the report that summarizes it."
+}

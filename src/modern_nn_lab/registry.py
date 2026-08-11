@@ -85,7 +85,9 @@ TRACKS: tuple[TrackSpec, ...] = (
         "Prior-Fitted Networks / TabPFN",
         "tabular",
         "Must each dataset require conventional fitting?",
-        "educational implementation",
+        # Downgraded by the final-integration claim audit: the policy requires
+        # implementation from primary sources, and none was read for this track.
+        "research prototype",
         "complete",
     ),
     TrackSpec(
@@ -101,7 +103,9 @@ TRACKS: tuple[TrackSpec, ...] = (
         "Sparse Mixture of Experts",
         "general",
         "Can conditional computation scale capacity efficiently?",
-        "educational implementation",
+        # Downgraded by the final-integration claim audit: the policy requires
+        # implementation from primary sources, and none was read for this track.
+        "research prototype",
         "complete",
     ),
     TrackSpec(
@@ -111,7 +115,9 @@ TRACKS: tuple[TrackSpec, ...] = (
         "Can generation be learned as vector-field regression?",
         # Downgraded from `compact reproduction` when the track was built: no primary
         # source was read, so there is no paper experiment to be faithful to.
-        "educational implementation",
+        # Downgraded by the final-integration claim audit: the policy requires
+        # implementation from primary sources, and none was read for this track.
+        "research prototype",
         "complete",
     ),
     TrackSpec(
