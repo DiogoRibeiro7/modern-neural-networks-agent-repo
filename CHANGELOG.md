@@ -10,6 +10,16 @@ experimental results, as defined in [`docs/claim_policy.md`](docs/claim_policy.m
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-08-11
+
+**All eleven architecture tracks and the cross-track integration are complete**, and the
+program milestones M0-M6 in `docs/milestones.md` are satisfied including the exit condition.
+
+This release also **downgrades three claim levels**. The claim audit found that
+`educational implementation` requires implementation from primary sources, and Prior-Fitted
+Networks, Sparse MoE, and Flow Matching claimed it without a source having been read. No
+implementation or result changed; the labels were overstated.
+
 ### Added
 
 - **Track 11 — JEPA / predictive representation learning** (claim level: `research
@@ -27,8 +37,17 @@ experimental results, as defined in [`docs/claim_policy.md`](docs/claim_policy.m
   is isotropic, and variance reads *low* on a merely rescaled representation that lost no
   information at all.
 
+- `ROADMAP.md`: forward-looking priorities ordered by effect on what the repository can
+  legitimately claim, with explicit non-goals — no aggregate leaderboard, no scale chasing,
+  and no claim-level upgrade without the corresponding work.
+
 ### Changed
 
+- **Claim levels downgraded** for Prior-Fitted Networks, Sparse MoE, and Flow Matching, from
+  `educational implementation` to `research prototype`, by the final-integration claim audit.
+- `docs/claim_policy.md` now **defines `research prototype`**, which the registry used but
+  the policy never described, and states the primary-source precondition in
+  `educational implementation` explicitly rather than leaving it as an adjective.
 - The JEPA linear probe standardizes features using training statistics, making it
   invariant to representation scale. Without it the ridge penalty swamps a small-magnitude
   representation and the probe reports lost information where none was lost — a fully
@@ -173,7 +192,8 @@ published number.
   contract, mathematical notation, milestones, source registry, and track matrix.
 - Track prompts for eleven architecture tracks plus the final integration prompt.
 
-[Unreleased]: https://github.com/DiogoRibeiro7/modern-neural-networks-agent-repo/compare/v0.2.1...HEAD
+[Unreleased]: https://github.com/DiogoRibeiro7/modern-neural-networks-agent-repo/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/DiogoRibeiro7/modern-neural-networks-agent-repo/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/DiogoRibeiro7/modern-neural-networks-agent-repo/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/DiogoRibeiro7/modern-neural-networks-agent-repo/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/DiogoRibeiro7/modern-neural-networks-agent-repo/releases/tag/v0.1.0
